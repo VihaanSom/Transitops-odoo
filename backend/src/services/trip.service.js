@@ -31,6 +31,7 @@ function handlePrismaError(err) {
 /**
  * GET /api/trips
  * Optional query: status (draft | dispatched | completed | cancelled)
+ * Optional query: limit (integer) — max number of results to return
  */
 async function getAllTrips(filters = {}) {
   const where = {};
@@ -39,6 +40,7 @@ async function getAllTrips(filters = {}) {
   return prisma.trips.findMany({
     where,
     orderBy: { created_at: 'desc' },
+    ...(filters.limit ? { take: parseInt(filters.limit, 10) } : {}),
     include: {
       vehicles: {
         select: {

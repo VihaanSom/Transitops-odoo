@@ -15,120 +15,8 @@ import {
 } from '@phosphor-icons/react'
 import { fetchVehicles } from '../services/vehicleService'
 import { fetchDrivers } from '../services/driverService'
-import { fetchTrips, createTrip, dispatchTrip } from '../services/tripService'
+import { fetchTrips, createTrip, dispatchTrip, completeTrip, cancelTrip } from '../services/tripService'
 import type { Vehicle, Driver, Trip, CreateTripPayload, TripStatus } from '../types/api'
-
-// -------------------------------------------------
-// Mock Fallback Data (When Backend Not Accessible)
-// -------------------------------------------------
-
-const MOCK_AVAILABLE_VEHICLES: Vehicle[] = [
-  {
-    id: 'v1',
-    registration_number: 'GJ01AB4521',
-    name_model: 'VAN-05',
-    vehicle_type: 'Van',
-    max_load_capacity: 500,
-    odometer: 74000,
-    acquisition_cost: 620000,
-    status: 'available',
-  },
-  {
-    id: 'v2',
-    registration_number: 'GJ01AB9981',
-    name_model: 'TRUCK-04',
-    vehicle_type: 'Truck',
-    max_load_capacity: 5000,
-    odometer: 182000,
-    acquisition_cost: 2450000,
-    status: 'available',
-  },
-  {
-    id: 'v3',
-    registration_number: 'GJ01AB1120',
-    name_model: 'MINI-02',
-    vehicle_type: 'Mini',
-    max_load_capacity: 1000,
-    odometer: 66000,
-    acquisition_cost: 410000,
-    status: 'available',
-  },
-]
-
-const MOCK_AVAILABLE_DRIVERS: Driver[] = [
-  {
-    id: 'd1',
-    name: 'Alex',
-    license_number: 'GJ-01-2018-9921',
-    license_category: 'HMV',
-    license_expiry_date: '2028-11-15',
-    contact_number: '+91 98765 43210',
-    safety_score: 96,
-    status: 'available',
-  },
-  {
-    id: 'd2',
-    name: 'Suresh',
-    license_number: 'GJ-01-2016-1102',
-    license_category: 'HMV',
-    license_expiry_date: '2027-04-20',
-    contact_number: '+91 98231 00112',
-    safety_score: 92,
-    status: 'available',
-  },
-  {
-    id: 'd3',
-    name: 'Vikram Singh',
-    license_number: 'GJ-01-2020-5541',
-    license_category: 'LMV',
-    license_expiry_date: '2030-08-10',
-    contact_number: '+91 99112 33445',
-    safety_score: 98,
-    status: 'available',
-  },
-]
-
-const MOCK_TRIPS: Trip[] = [
-  {
-    id: 'TR001',
-    source: 'Gandhinagar Depot',
-    destination: 'Ahmedabad Hub',
-    vehicle_id: 'v1',
-    driver_id: 'd1',
-    cargo_weight: 450,
-    planned_distance: 35,
-    status: 'dispatched',
-    vehicle: { id: 'v1', registration_number: 'GJ01AB4521', name_model: 'VAN-05', max_load_capacity: 500 },
-    driver: { id: 'd1', name: 'ALEX' },
-    eta: '45 min',
-  },
-  {
-    id: 'TR004',
-    source: 'Vatva Industrial Area',
-    destination: 'Sanand Warehouse',
-    vehicle_id: 'v2',
-    driver_id: 'd2',
-    cargo_weight: 3200,
-    planned_distance: 52,
-    status: 'draft',
-    vehicle: { id: 'v2', registration_number: 'GJ01AB9981', name_model: 'TRUCK-04', max_load_capacity: 5000 },
-    driver: { id: 'd2', name: 'SURESH' },
-    eta: 'Awaiting driver',
-  },
-  {
-    id: 'TR006',
-    source: 'Mansa',
-    destination: 'Kalol Depot',
-    vehicle_id: '',
-    driver_id: '',
-    cargo_weight: 800,
-    planned_distance: 28,
-    status: 'cancelled',
-    vehicle: undefined,
-    driver: undefined,
-    eta: 'Vehicle went to shop',
-  },
-]
 
 const STATUS_BADGE_CONFIG: Record<TripStatus, { label: string; badgeClass: string }> = {
   draft: { label: 'Draft', badgeClass: 'badge-ghost border-base-300 text-base-content/70' },
@@ -191,25 +79,25 @@ export function Trips() {
     setError(null)
     try {
       const [vData, dData, tData] = await Promise.all([
-        fetchVehicles({ status: 'available' }).catch(() => MOCK_AVAILABLE_VEHICLES),
-        fetchDrivers({ status: 'available' }).catch(() => MOCK_AVAILABLE_DRIVERS),
-        fetchTrips().catch(() => MOCK_TRIPS),
+        fetchVehicles({ status: 'available' }),
+        fetchDrivers({ status: 'available' }),
+        fetchTrips(),
       ])
 
-      setAvailableVehicles(vData.length > 0 ? vData : MOCK_AVAILABLE_VEHICLES)
-      setAvailableDrivers(dData.length > 0 ? dData : MOCK_AVAILABLE_DRIVERS)
-      setTrips(tData.length > 0 ? tData : MOCK_TRIPS)
+      setAvailableVehicles(vData)
+      setAvailableDrivers(dData)
+      setTrips(tData)
 
       // Set default selected vehicle & driver if form is empty
-      setFormState((prev) => ({
-        ...prev,
-        vehicle_id: prev.vehicle_id || (vData[0]?.id ?? MOCK_AVAILABLE_VEHICLES[0]?.id ?? ''),
-        driver_id: prev.driver_id || (dData[0]?.id ?? MOCK_AVAILABLE_DRIVERS[0]?.id ?? ''),
-      }))
-    } catch {
-      setAvailableVehicles(MOCK_AVAILABLE_VEHICLES)
-      setAvailableDrivers(MOCK_AVAILABLE_DRIVERS)
-      setTrips(MOCK_TRIPS)
+      if (vData.length > 0 || dData.length > 0) {
+        setFormState((prev) => ({
+          ...prev,
+          vehicle_id: prev.vehicle_id || (vData[0]?.id ?? ''),
+          driver_id: prev.driver_id || (dData[0]?.id ?? ''),
+        }))
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load trip data from server.')
     } finally {
       setIsLoading(false)
     }
@@ -277,33 +165,7 @@ export function Trips() {
         planned_distance: 0,
       }))
     } catch (err) {
-      // Fallback simulation when offline or API returns error
-      const mockNewTrip: Trip = {
-        id: `TR00${trips.length + 1}`,
-        source: formState.source || 'Depot',
-        destination: formState.destination || 'Hub',
-        vehicle_id: formState.vehicle_id,
-        driver_id: formState.driver_id,
-        cargo_weight: formState.cargo_weight,
-        planned_distance: formState.planned_distance,
-        status: 'draft',
-        vehicle: selectedVehicle,
-        driver: availableDrivers.find((d) => d.id === formState.driver_id),
-        eta: 'Awaiting dispatch',
-      }
-      setTrips((prev) => [mockNewTrip, ...prev])
-      setSelectedTripId(mockNewTrip.id)
-      setFormSuccess(`Trip ${mockNewTrip.id} created in draft state!`)
-      setFormState((prev) => ({
-        ...prev,
-        source: '',
-        destination: '',
-        cargo_weight: 0,
-        planned_distance: 0,
-      }))
-      if (err instanceof Error && err.message !== 'Failed to fetch') {
-        setError(err.message)
-      }
+      setError(err instanceof Error ? err.message : 'Failed to create trip. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -314,12 +176,28 @@ export function Trips() {
     try {
       await dispatchTrip(tripId)
       await loadAllData()
-    } catch {
-      setTrips((prev) =>
-        prev.map((t) =>
-          t.id === tripId ? { ...t, status: 'dispatched' as const, eta: '40 min' } : t,
-        ),
-      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to dispatch trip.')
+    }
+  }
+
+  async function handleCompleteTrip(tripId: string, e?: React.MouseEvent) {
+    if (e) e.stopPropagation()
+    try {
+      await completeTrip(tripId, {})
+      await loadAllData()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to complete trip.')
+    }
+  }
+
+  async function handleCancelTrip(tripId: string, e?: React.MouseEvent) {
+    if (e) e.stopPropagation()
+    try {
+      await cancelTrip(tripId)
+      await loadAllData()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to cancel trip.')
     }
   }
 
@@ -799,29 +677,62 @@ export function Trips() {
                       <span className="text-base-content/90">{trip.destination}</span>
                     </div>
 
-                    {/* Card Bottom Row: Status Badge & ETA / Actions */}
+                    {/* Card Bottom Row: Status Badge & Actions */}
                     <div className="flex items-center justify-between pt-3 border-t border-base-300/50">
                       <div className="flex items-center gap-2.5">
                         <span className={`badge badge-sm px-3 py-2.5 rounded-md ${statusInfo.badgeClass}`}>
                           {statusInfo.label}
                         </span>
 
+                        {/* Dispatch Now — for draft trips */}
                         {trip.status === 'draft' && (
                           <button
                             type="button"
                             onClick={(e) => handleQuickDispatch(trip.id, e)}
                             className="btn btn-xs btn-info btn-outline rounded-full font-semibold px-2.5"
                           >
-                            Dispatch Now
+                            Dispatch
+                          </button>
+                        )}
+
+                        {/* Complete — for dispatched trips */}
+                        {trip.status === 'dispatched' && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleCompleteTrip(trip.id, e)}
+                            className="btn btn-xs btn-success btn-outline rounded-full font-semibold px-2.5"
+                          >
+                            <CheckCircle size={13} weight="bold" />
+                            Complete
+                          </button>
+                        )}
+
+                        {/* Cancel — for draft or dispatched trips */}
+                        {(trip.status === 'draft' || trip.status === 'dispatched') && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleCancelTrip(trip.id, e)}
+                            className="btn btn-xs btn-error btn-outline rounded-full font-semibold px-2.5"
+                          >
+                            <XCircle size={13} weight="bold" />
+                            Cancel
                           </button>
                         )}
                       </div>
 
                       <div className="flex items-center gap-1.5 text-xs text-base-content/60 font-medium">
-                        {trip.eta && trip.eta !== 'Awaiting driver' && trip.eta !== 'Vehicle went to shop' && (
+                        {trip.status === 'dispatched' && (
                           <Clock size={14} weight="duotone" className="text-base-content/40" />
                         )}
-                        <span>{trip.eta || 'Scheduled'}</span>
+                        <span>
+                          {trip.status === 'completed'
+                            ? 'Completed'
+                            : trip.status === 'cancelled'
+                              ? 'Cancelled'
+                              : trip.status === 'dispatched'
+                                ? 'In transit'
+                                : 'Pending dispatch'}
+                        </span>
                       </div>
                     </div>
                   </div>

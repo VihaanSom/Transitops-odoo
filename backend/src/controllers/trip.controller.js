@@ -5,7 +5,10 @@ const tripService = require('../services/trip.service');
 // ── GET /api/trips ────────────────────────────────────────────────────────────
 async function getAllTrips(req, res, next) {
   try {
-    const trips = await tripService.getAllTrips({ status: req.query.status });
+    const trips = await tripService.getAllTrips({
+      status: req.query.status,
+      limit: req.query.limit,
+    });
     res.json(trips);
   } catch (err) {
     next(err);

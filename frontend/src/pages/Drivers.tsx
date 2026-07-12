@@ -10,7 +10,7 @@ import {
   Circle,
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'motion/react'
-import { getDrivers, createDriver, updateDriverStatus } from '../services/driverService'
+import { fetchDrivers, createDriver, updateDriverStatus } from '../services/driverService'
 import type { Driver, DriverStatus } from '../types/models'
 import type { CreateDriverPayload } from '../types/api'
 import { useAuth } from '../context/AuthContext'
@@ -96,7 +96,7 @@ export function Drivers() {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getDrivers()
+      const data = await fetchDrivers()
       setDrivers(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load drivers.')
