@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
+import { Vehicles } from './pages/Vehicles'
 import { AppShell } from './components/layout/AppShell'
 
 // -------------------------------------------------
@@ -37,9 +38,10 @@ export default function App() {
             <Route element={<AppShell />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/fleet" element={<Vehicles />} />
+              <Route path="/vehicles" element={<Navigate to="/fleet" replace />} />
 
-              {/* Placeholder routes for sidebar nav items */}
-              <Route path="/fleet" element={<PlaceholderPage title="Fleet Management" />} />
+              {/* Placeholder routes for other sidebar nav items */}
               <Route path="/drivers" element={<PlaceholderPage title="Driver Management" />} />
               <Route path="/trips" element={<PlaceholderPage title="Trip Management" />} />
               <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
@@ -64,8 +66,8 @@ export default function App() {
 function PlaceholderPage({ title }: { title: string }) {
   return (
     <div className="flex items-center justify-center py-32">
-      <p className="text-sm text-base-content/40">
-        {title} -- coming soon.
+      <p className="text-sm text-base-content/40 font-medium">
+        {title} &mdash; coming soon.
       </p>
     </div>
   )

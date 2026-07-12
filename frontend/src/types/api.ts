@@ -8,8 +8,6 @@ export type UserRole = 'Fleet Manager' | 'Dispatcher' | 'Safety Officer' | 'Fina
 /** User object returned from auth endpoints */
 export interface AuthUser {
   id: string
-  first_name: string | null
-  last_name: string | null
   email: string
   role: UserRole
 }
@@ -28,8 +26,8 @@ export interface LoginResponse {
 
 /** POST /auth/register request payload */
 export interface RegisterPayload {
-  first_name?: string
-  last_name?: string
+  firstName: string
+  lastName: string
   email: string
   password: string
   role: UserRole
@@ -53,6 +51,32 @@ export interface DashboardKpis {
   pendingTrips: number
   driversOnDuty: number
   fleetUtilization: number
+}
+
+// -------------------------------------------------
+// Vehicle API Types
+// -------------------------------------------------
+
+export type VehicleStatus = 'available' | 'on_trip' | 'in_shop' | 'retired'
+
+export interface Vehicle {
+  id: string
+  registration_number: string
+  name_model: string
+  vehicle_type: string
+  max_load_capacity: number
+  odometer: number
+  acquisition_cost: number
+  status: VehicleStatus
+}
+
+export interface CreateVehiclePayload {
+  registration_number: string
+  name_model: string
+  vehicle_type: string
+  max_load_capacity: number
+  odometer: number
+  acquisition_cost: number
 }
 
 // -------------------------------------------------
