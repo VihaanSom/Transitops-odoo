@@ -265,7 +265,7 @@ export function Login() {
                     first_name: 'Raven',
                     last_name: 'K.',
                     email: 'raven@transitops.in',
-                    role: 'Dispatcher',
+                    role: 'Safety Officer',
                   })
                   navigate('/dashboard', { replace: true })
                 }}

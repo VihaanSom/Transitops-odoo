@@ -1,6 +1,7 @@
 import { apiFetch } from './api'
-import type { Driver } from '../types/api'
+import type { Driver, DriverStatus } from '../types/models'
 import type { CreateDriverPayload } from '../types/api'
+
 /**
  * GET /drivers
  * Returns list of drivers, optionally filtered by status.
