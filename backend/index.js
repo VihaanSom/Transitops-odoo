@@ -1,22 +1,26 @@
 require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const { PrismaClient } = require('@prisma/client');
 
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const authRoutes = require('./src/routes/auth.routes');
+const errorHandler = require('./src/middlewares/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// ── Routes ──────────────────────────────────────────────────────────────────
+app.use('/api/trips', require('./src/routes/trip.routes'));
+
+// ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+app.use('/api/auth', authRoutes);
+
+// ── Global Error Handler (must be last) ───────────────────────────────────────
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
