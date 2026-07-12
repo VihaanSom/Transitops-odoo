@@ -80,6 +80,60 @@ export interface CreateVehiclePayload {
 }
 
 // -------------------------------------------------
+// Driver API Types
+// -------------------------------------------------
+
+export type DriverStatus = 'available' | 'on_trip' | 'off_duty' | 'suspended'
+
+export interface Driver {
+  id: string
+  name: string
+  license_number: string
+  license_category: string
+  license_expiry_date: string
+  contact_number: string
+  safety_score: number
+  status: DriverStatus
+}
+
+// -------------------------------------------------
+// Trip API Types
+// -------------------------------------------------
+
+export type TripStatus = 'draft' | 'dispatched' | 'completed' | 'cancelled'
+
+export interface Trip {
+  id: string
+  source: string
+  destination: string
+  vehicle_id: string
+  driver_id: string
+  cargo_weight: number
+  planned_distance: number
+  start_odometer?: number
+  scheduled_at?: string
+  dispatched_at?: string
+  completed_at?: string
+  cancelled_at?: string
+  status: TripStatus
+  // Optional populated relationships/display info
+  vehicle?: Vehicle | { id: string; registration_number: string; name_model: string; max_load_capacity: number }
+  driver?: Driver | { id: string; name: string }
+  eta?: string
+}
+
+export interface CreateTripPayload {
+  source: string
+  destination: string
+  vehicle_id: string
+  driver_id: string
+  cargo_weight: number
+  planned_distance: number
+  start_odometer?: number
+  scheduled_at?: string
+}
+
+// -------------------------------------------------
 // Generic API Error
 // -------------------------------------------------
 
