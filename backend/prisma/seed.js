@@ -12,6 +12,7 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -28,35 +29,37 @@ async function main() {
   await prisma.$executeRaw`TRUNCATE TABLE expenses, fuel_logs, maintenance_logs, trips, vehicle_documents, drivers, vehicles, users RESTART IDENTITY CASCADE`;
   console.log('  ✅ Cleared.\n');
 
-  // ── 2. Users (one per role, plain-text passwords for testing) ─────────────
+  // ── 2. Users (one per role, hashed passwords) ─────────────
   console.log('  👤 Seeding users...');
+  const password_hash = await bcrypt.hash('password123', 10);
+  
   const users = await Promise.all([
     prisma.users.create({
       data: {
         role: 'Fleet Manager',
         email: 'fleet@transitops.com',
-        password_hash: 'password123',
+        password_hash,
       },
     }),
     prisma.users.create({
       data: {
         role: 'Safety Officer',
         email: 'safety@transitops.com',
-        password_hash: 'password123',
+        password_hash,
       },
     }),
     prisma.users.create({
       data: {
         role: 'Dispatcher',
         email: 'dispatch@transitops.com',
-        password_hash: 'password123',
+        password_hash,
       },
     }),
     prisma.users.create({
       data: {
         role: 'Financial Analyst',
         email: 'finance@transitops.com',
-        password_hash: 'password123',
+        password_hash,
       },
     }),
   ]);
@@ -402,7 +405,7 @@ async function main() {
   console.log(`   Fuel Logs:        3`);
   console.log(`   Expenses:         4`);
   console.log('═══════════════════════════════════════');
-  console.log('\n📋 Test Credentials (PLAIN TEXT — testing only):');
+  console.log('\n📋 Test Credentials:');
   console.log('   fleet@transitops.com    / password123  [Fleet Manager]');
   console.log('   safety@transitops.com   / password123  [Safety Officer]');
   console.log('   dispatch@transitops.com / password123  [Dispatcher]');
