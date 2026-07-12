@@ -113,9 +113,18 @@ export function Drivers() {
   // ---- Form Handlers ----
   function handleFormChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value, type } = e.target
+    const sanitizedValue = name === 'name' ? value.replace(/[^a-zA-Z0-9 ]/g, '') : value
     setFormState((prev) => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value,
+      [name]: type === 'number' ? Number(sanitizedValue) : sanitizedValue,
+    }))
+  }
+
+  function handleNameChange(e: ChangeEvent<HTMLInputElement>) {
+    const sanitized = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    setFormState((prev) => ({
+      ...prev,
+      name: sanitized,
     }))
   }
 
@@ -410,15 +419,6 @@ export function Drivers() {
         </div>
       )}
 
-      {/* ---- Rule Notice ---- */}
-      <div className="flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/5 px-4 py-3">
-        <WarningCircle size={18} weight="duotone" className="text-warning shrink-0 mt-0.5" />
-        <p className="text-sm text-base-content/80">
-          <span className="font-semibold text-warning">Note: </span>
-          Expired license or Suspended status → blocked from trip assignment.
-        </p>
-      </div>
-
       {/* ---- Confirm Suspend Dialog ---- */}
       <ConfirmDialog
         open={confirmSuspendOpen}
@@ -503,7 +503,7 @@ export function Drivers() {
                       required
                       placeholder="e.g. Arjun Mehta"
                       value={formState.name}
-                      onChange={handleFormChange}
+                      onChange={handleNameChange}
                       className="input input-bordered w-full text-sm rounded-lg"
                     />
                   </div>
