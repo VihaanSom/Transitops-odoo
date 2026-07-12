@@ -20,7 +20,10 @@ export async function fetchMaintenanceRecords(): Promise<MaintenanceRecord[]> {
 export async function createMaintenanceRecord(payload: CreateMaintenancePayload): Promise<MaintenanceRecord> {
   return await apiFetch<MaintenanceRecord>('/maintenance', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      vehicle_id: Number(payload.vehicle_id)
+    }),
   })
 }
 

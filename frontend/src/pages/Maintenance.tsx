@@ -348,7 +348,8 @@ export function Maintenance() {
                     </label>
                     <div className="input input-bordered input-sm w-full bg-base-200/60 border-base-300 flex items-center px-2.5 cursor-not-allowed">
                       <span className="badge badge-warning badge-xs gap-1 font-medium text-[10px] py-2">
-                        Active
+                        <WarningCircle size={12} weight="duotone" />
+                        In Shop
                       </span>
                     </div>
                   </div>
@@ -473,13 +474,13 @@ export function Maintenance() {
                               <div className="flex items-center justify-end gap-2">
                                 {open ? (
                                   <>
-                                    <span className="badge badge-warning badge-sm gap-1.5 py-2.5 px-3 font-medium">
+                                    <span className="badge badge-warning badge-sm gap-1.5 py-2.5 px-3 font-medium whitespace-nowrap">
                                       <WarningCircle size={14} weight="duotone" />
                                       In Shop
                                     </span>
                                     <button
                                       onClick={() => openCloseTicketModal(record)}
-                                      className="btn btn-xs btn-ghost border border-primary/30 text-primary hover:bg-primary hover:text-primary-content rounded-full gap-1 transition-all"
+                                      className="btn btn-xs btn-ghost border border-[#088370]/30 text-[#088370] hover:bg-[#088370] hover:text-white hover:border-[#088370] rounded-full gap-1 transition-all"
                                       title="Close Ticket & Return Vehicle to Pool"
                                     >
                                       <CheckCircle size={14} weight="bold" />

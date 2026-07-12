@@ -25,7 +25,11 @@ export async function fetchTrips(params?: { status?: string }): Promise<Trip[]> 
 export async function createTrip(payload: CreateTripPayload): Promise<Trip> {
   const trip = await apiFetch<Trip>('/trips', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      vehicle_id: Number(payload.vehicle_id),
+      driver_id: Number(payload.driver_id),
+    }),
   })
   return normaliseTrip(trip)
 }
