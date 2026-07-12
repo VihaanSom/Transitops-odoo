@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "cupcake";
+  default: true;
+}
+@plugin "daisyui/theme" {
+  name: "night";
+  default: dark;
+}
+
+:root {
+  font-family: 'Outfit', sans-serif;
+  --radius-btn: 9999px; /* Make buttons pill-shaped */
+}
+
+@theme {
+  --font-sans: 'Outfit', sans-serif;
+}
