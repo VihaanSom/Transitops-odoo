@@ -50,4 +50,46 @@ async function login(email, password) {
   };
 }
 
-module.exports = { login };
+/**
+ * Registers a new user.
+ *
+ * @param {{ email: string, password: string, role: string }} data
+ * @returns {{ user: { id: number, role: string, email: string } }}
+ */
+async function register(data) {
+  const password_hash = await bcrypt.hash(data.password, 10);
+  
+  const user = await prisma.users.create({
+    data: {
+      email: data.email,
+      role: data.role,
+      password_hash,
+    },
+  });
+
+  return {
+    user: {
+      id: user.id,
+      role: user.role,
+      email: user.email,
+    },
+  };
+}
+
+/**
+ * Deletes a user account.
+ *
+ * @param {number} id
+ */
+async function deleteAccount(id) {
+  const user = await prisma.users.findUnique({ where: { id } });
+  if (!user) {
+    const err = new Error('User not found.');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return prisma.users.delete({ where: { id } });
+}
+
+module.exports = { login, register, deleteAccount };
