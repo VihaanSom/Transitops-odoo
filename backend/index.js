@@ -20,6 +20,8 @@ app.use('/api/vehicles', require('./src/routes/vehicle.routes'));
 app.use('/api/drivers', require('./src/routes/driver.routes'));
 app.use('/api/trips', require('./src/routes/trip.routes'));
 app.use('/api/maintenance', require('./src/routes/maintenance.routes'));
+app.use('/api/expenses', require('./src/routes/expense.routes'));
+app.use('/api/reports', require('./src/routes/report.routes'));
 
 // ── Global Error Handler (must be last) ───────────────────────────────────────
 app.use(errorHandler);
