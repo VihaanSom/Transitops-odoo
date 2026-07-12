@@ -13,39 +13,39 @@ router.use(verifyToken);
 
 /**
  * GET /api/drivers
- * Access: Safety Officer, Dispatcher
+ * Access: Fleet Manager, Safety Officer
+ * (Dispatcher = no access per RBAC table)
  */
 router.get(
   '/',
-  requireRole('Safety Officer', 'Dispatcher'),
+  requireRole('Fleet Manager', 'Safety Officer'),
   driverController.getAllDrivers,
 );
 
 /**
  * POST /api/drivers
- * Access: Safety Officer, Dispatcher
+ * Access: Fleet Manager, Safety Officer
  */
 router.post(
   '/',
-  requireRole('Safety Officer', 'Dispatcher'),
+  requireRole('Fleet Manager', 'Safety Officer'),
   validate(createDriverSchema),
   driverController.createDriver,
 );
 
 /**
  * GET /api/drivers/:id
- * Access: Safety Officer, Dispatcher
+ * Access: Fleet Manager, Safety Officer
  */
 router.get(
   '/:id',
-  requireRole('Safety Officer', 'Dispatcher'),
+  requireRole('Fleet Manager', 'Safety Officer'),
   driverController.getDriverById,
 );
 
 /**
  * PUT /api/drivers/:id/status
- * Access: Safety Officer only
- * Used for manual suspensions or status corrections.
+ * Access: Safety Officer only (manual suspensions / status corrections)
  */
 router.put(
   '/:id/status',
@@ -56,11 +56,11 @@ router.put(
 
 /**
  * DELETE /api/drivers/:id
- * Access: Safety Officer only
+ * Access: Fleet Manager, Safety Officer
  */
 router.delete(
   '/:id',
-  requireRole('Safety Officer'),
+  requireRole('Fleet Manager', 'Safety Officer'),
   driverController.deleteDriver,
 );
 

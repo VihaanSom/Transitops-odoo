@@ -10,25 +10,36 @@ import {
   GearSix,
   SquaresFour,
 } from '@phosphor-icons/react'
+import { useAuth } from '../../context/AuthContext'
+import type { UserRole } from '../../types/api'
 
 // -------------------------------------------------
-// Navigation items
+// RBAC nav config
+// roles: undefined = visible to all authenticated users
+//        string[]  = visible only to listed roles
 // -------------------------------------------------
 
 interface NavItem {
   label: string
   path: string
   icon: React.ElementType
+  roles?: UserRole[]
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: SquaresFour },
-  { label: 'Fleet', path: '/fleet', icon: Truck },
-  { label: 'Drivers', path: '/drivers', icon: UsersThree },
-  { label: 'Trips', path: '/trips', icon: Path },
-  { label: 'Maintenance', path: '/maintenance', icon: Wrench },
-  { label: 'Fuel & Expenses', path: '/fuel-expenses', icon: CurrencyInr },
-  { label: 'Analytics', path: '/analytics', icon: ChartLine },
+  { label: 'Dashboard',       path: '/dashboard',      icon: SquaresFour },
+  // Fleet: Fleet Manager (full), Dispatcher (view), Financial Analyst (view)
+  { label: 'Fleet',           path: '/fleet',           icon: Truck,        roles: ['Fleet Manager', 'Dispatcher', 'Financial Analyst'] },
+  // Drivers: Fleet Manager (full), Safety Officer (full)
+  { label: 'Drivers',         path: '/drivers',         icon: UsersThree,   roles: ['Fleet Manager', 'Safety Officer'] },
+  // Trips: Dispatcher (full), Safety Officer (view)
+  { label: 'Trips',           path: '/trips',           icon: Path,         roles: ['Dispatcher', 'Safety Officer'] },
+  // Maintenance: Fleet Manager (full), Financial Analyst (view)
+  { label: 'Maintenance',     path: '/maintenance',     icon: Wrench,       roles: ['Fleet Manager', 'Financial Analyst'] },
+  // Fuel & Expenses: Financial Analyst only
+  { label: 'Fuel & Expenses', path: '/fuel-expenses',  icon: CurrencyInr,  roles: ['Financial Analyst'] },
+  // Analytics: Fleet Manager, Financial Analyst
+  { label: 'Analytics',       path: '/analytics',       icon: ChartLine,    roles: ['Fleet Manager', 'Financial Analyst'] },
 ]
 
 const BOTTOM_NAV: NavItem[] = [
@@ -46,6 +57,12 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation()
+  const { user } = useAuth()
+
+  // Filter nav items by the current user's role
+  const visibleNavItems = NAV_ITEMS.filter(
+    (item) => !item.roles || (user?.role && item.roles.includes(user.role)),
+  )
 
   return (
     <>
@@ -77,7 +94,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Main navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => {
+            {visibleNavItems.map((item) => {
               const isActive = location.pathname === item.path
               const Icon = item.icon
               return (

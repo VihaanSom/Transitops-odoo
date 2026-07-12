@@ -6,8 +6,9 @@ const { z } = require('zod');
 const createTripSchema = z.object({
   source: z.string().min(1, 'Source is required').max(255),
   destination: z.string().min(1, 'Destination is required').max(255),
-  vehicle_id: z.number().int().positive('vehicle_id must be a positive integer'),
-  driver_id: z.number().int().positive('driver_id must be a positive integer'),
+  // Use coerce so string IDs sent from the frontend ('1', '2') are auto-cast to integers
+  vehicle_id: z.coerce.number().int().positive('vehicle_id must be a positive integer'),
+  driver_id: z.coerce.number().int().positive('driver_id must be a positive integer'),
   cargo_weight: z
     .number()
     .positive('cargo_weight must be greater than 0'),
@@ -16,7 +17,8 @@ const createTripSchema = z.object({
     .positive('planned_distance must be greater than 0'),
   start_odometer: z
     .number()
-    .nonnegative('start_odometer must be >= 0'),
+    .nonnegative('start_odometer must be >= 0')
+    .optional(),
   scheduled_at: z
     .string()
     .datetime({ message: 'scheduled_at must be a valid ISO 8601 datetime' })
@@ -35,10 +37,12 @@ const dispatchTripSchema = z.object({
 const completeTripSchema = z.object({
   final_odometer: z
     .number()
-    .nonnegative('final_odometer must be >= 0'),
+    .nonnegative('final_odometer must be >= 0')
+    .optional(),
   revenue: z
     .number()
-    .nonnegative('revenue must be >= 0'),
+    .nonnegative('revenue must be >= 0')
+    .optional(),
   completed_at: z
     .string()
     .datetime({ message: 'completed_at must be a valid ISO 8601 datetime' })

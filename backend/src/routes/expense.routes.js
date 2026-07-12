@@ -10,38 +10,42 @@ const router = Router();
 
 // ── Fuel Logs ─────────────────────────────────────────────────────────────────
 
-// GET  /api/expenses/fuel        — list all fuel logs (?vehicle_id= ?trip_id=)
+// GET  /api/expenses/fuel   — list all fuel logs (?vehicle_id= ?trip_id=)
+// Access: Financial Analyst only (full access per RBAC)
 router.get(
   '/fuel',
   verifyToken,
-  requireRole('Fleet Manager', 'Financial Analyst', 'Dispatcher'),
+  requireRole('Financial Analyst'),
   controller.getAllFuelLogs,
 );
 
-// POST /api/expenses/fuel        — record a fuel fill-up
+// POST /api/expenses/fuel   — record a fuel fill-up
+// Access: Financial Analyst only
 router.post(
   '/fuel',
   verifyToken,
-  requireRole('Fleet Manager', 'Dispatcher'),
+  requireRole('Financial Analyst'),
   validate(createFuelLogSchema),
   controller.createFuelLog,
 );
 
 // ── General Expenses ──────────────────────────────────────────────────────────
 
-// GET  /api/expenses/general     — list all expenses (?vehicle_id= ?trip_id= ?expense_type=)
+// GET  /api/expenses/general — list all expenses (?vehicle_id= ?trip_id= ?expense_type=)
+// Access: Financial Analyst only (full access per RBAC)
 router.get(
   '/general',
   verifyToken,
-  requireRole('Fleet Manager', 'Financial Analyst'),
+  requireRole('Financial Analyst'),
   controller.getAllExpenses,
 );
 
-// POST /api/expenses/general     — record a miscellaneous expense
+// POST /api/expenses/general — record a miscellaneous expense
+// Access: Financial Analyst only
 router.post(
   '/general',
   verifyToken,
-  requireRole('Fleet Manager', 'Financial Analyst'),
+  requireRole('Financial Analyst'),
   validate(createExpenseSchema),
   controller.createExpense,
 );
