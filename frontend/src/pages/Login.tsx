@@ -96,7 +96,7 @@ export function Login() {
         </div>
 
         <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
-          TransitOps &copy; 2026 &middot; RBAC Enabled
+          TransitOps &copy; 2026
         </p>
       </div>
 

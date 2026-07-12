@@ -84,7 +84,7 @@ const RBAC_MATRIX: RbacRow[] = [
 function AccessIndicator({ type }: { type: AccessType }) {
   if (type === 'full') {
     return (
-      <div className="inline-flex items-center justify-center p-1.5 rounded-lg bg-success/15 text-success shadow-2xs" title="Full Access">
+      <div className="inline-flex items-center justify-center p-1.5 rounded-lg bg-[#088370]/15 text-[#088370] shadow-2xs" title="Full Access">
         <Check size={16} weight="bold" />
       </div>
     )
@@ -162,7 +162,7 @@ export function Settings() {
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body p-5">
               <div className="flex items-center gap-2 border-b border-base-300/60 pb-3.5 mb-4">
-                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                <div className="p-1.5 rounded-lg bg-[#088370]/10 text-[#088370]">
                   <GearSix size={18} weight="duotone" />
                 </div>
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
@@ -174,7 +174,7 @@ export function Settings() {
                 {/* Depot Name */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <Building size={14} weight="duotone" className="text-primary" />
+                    <Building size={14} weight="duotone" className="text-[#088370]" />
                     Depot Name
                   </label>
                   <input
@@ -190,7 +190,7 @@ export function Settings() {
                 {/* Currency Input/Select */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <CurrencyInr size={14} weight="duotone" className="text-primary" />
+                    <CurrencyInr size={14} weight="duotone" className="text-[#088370]" />
                     Currency
                   </label>
                   <select
@@ -208,7 +208,7 @@ export function Settings() {
                 {/* Distance Unit Select */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <Path size={14} weight="duotone" className="text-primary" />
+                    <Path size={14} weight="duotone" className="text-[#088370]" />
                     Distance Unit
                   </label>
                   <select
@@ -225,7 +225,7 @@ export function Settings() {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="btn btn-primary rounded-full px-6 gap-2 font-semibold shadow-sm"
+                    className="btn border-none text-white bg-[#088370] hover:bg-[#088370]/90 rounded-full px-6 gap-2 font-semibold shadow-sm"
                   >
                     <FloppyDisk size={18} weight="bold" />
                     {isSaving ? 'Saving...' : 'Save changes'}
@@ -241,7 +241,7 @@ export function Settings() {
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body p-5">
               <div className="flex items-center gap-2 border-b border-base-300/60 pb-3.5 mb-4">
-                <div className="p-1.5 rounded-lg bg-success/10 text-success">
+                <div className="p-1.5 rounded-lg bg-[#088370]/10 text-[#088370]">
                   <ShieldCheck size={18} weight="duotone" />
                 </div>
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
@@ -293,7 +293,7 @@ export function Settings() {
               <div className="mt-4 pt-3 border-t border-base-200 flex flex-wrap items-center justify-between gap-3 text-xs text-base-content/60">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5 font-medium">
-                    <span className="p-1 rounded bg-success/15 text-success">
+                    <span className="p-1 rounded bg-[#088370]/15 text-[#088370]">
                       <Check size={12} weight="bold" />
                     </span>
                     <span>Full Access</span>
@@ -312,9 +312,6 @@ export function Settings() {
                     <span>No Access</span>
                   </div>
                 </div>
-                <span className="text-[11px] text-base-content/40 font-mono">
-                  Enforced via API JWT RBAC middleware
-                </span>
               </div>
             </div>
           </div>

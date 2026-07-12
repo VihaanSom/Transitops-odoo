@@ -16,7 +16,11 @@ export async function fetchTrips(): Promise<Trip[]> {
 export async function createTrip(payload: CreateTripPayload): Promise<Trip> {
   return apiFetch<Trip>('/trips', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      vehicle_id: Number(payload.vehicle_id),
+      driver_id: Number(payload.driver_id),
+    }),
   })
 }
 

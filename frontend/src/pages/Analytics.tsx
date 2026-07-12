@@ -81,16 +81,16 @@ export function Analytics() {
   // -------------------------------------------------
   // Frontend Data Aggregations & KPIs
   // -------------------------------------------------
-  const totalRevenue = analyticsData.reduce((sum, v) => sum + (v.total_revenue || 0), 0)
-  const totalMaintenance = analyticsData.reduce((sum, v) => sum + (v.total_maintenance_cost || 0), 0)
-  const totalFuel = analyticsData.reduce((sum, v) => sum + (v.total_fuel_cost || 0), 0)
+  const totalRevenue = analyticsData.reduce((sum, v) => sum + Number(v.total_revenue || 0), 0)
+  const totalMaintenance = analyticsData.reduce((sum, v) => sum + Number(v.total_maintenance_cost || 0), 0)
+  const totalFuel = analyticsData.reduce((sum, v) => sum + Number(v.total_fuel_cost || 0), 0)
   const totalOperationalCost = totalMaintenance + totalFuel
-  const totalDistance = analyticsData.reduce((sum, v) => sum + (v.total_distance || 0), 0)
+  const totalDistance = analyticsData.reduce((sum, v) => sum + Number(v.total_distance || 0), 0)
   const totalFuelLiters = analyticsData.reduce(
-    (sum, v) => sum + (v.total_fuel_liters || (v.total_distance ? v.total_distance / 8.4 : 0)),
+    (sum, v) => sum + (Number(v.total_fuel_liters) || (Number(v.total_distance) ? Number(v.total_distance) / 8.4 : 0)),
     0
   )
-  const totalAcquisitionCost = analyticsData.reduce((sum, v) => sum + (v.acquisition_cost || 0), 0)
+  const totalAcquisitionCost = analyticsData.reduce((sum, v) => sum + Number(v.acquisition_cost || 0), 0)
 
   // Calculated KPIs matching exact mockup definitions
   const fuelEfficiency = totalFuelLiters > 0 ? (totalDistance / totalFuelLiters).toFixed(1) : '8.4'
@@ -98,15 +98,18 @@ export function Analytics() {
   const operationalCostFormatted = totalOperationalCost > 0
     ? totalOperationalCost.toLocaleString()
     : '34,070'
-  const vehicleRoi = totalAcquisitionCost > 0
-    ? (((totalRevenue - totalOperationalCost) / totalAcquisitionCost) * 100).toFixed(1) + '%'
-    : '14.2%'
+  const rawRoi = totalAcquisitionCost > 0
+    ? ((totalRevenue - totalOperationalCost) / totalAcquisitionCost) * 100
+    : 14.2
+  const vehicleRoi = Math.abs(rawRoi) < 0.05
+    ? '+0.0%'
+    : (rawRoi > 0 ? '+' : '') + rawRoi.toFixed(1) + '%'
 
   // Top Costliest Vehicles sorted by total cost (Maintenance + Fuel) descending
   const topCostliestVehicles = [...analyticsData]
     .map((v) => ({
       ...v,
-      totalCost: (v.total_maintenance_cost || 0) + (v.total_fuel_cost || 0),
+      totalCost: Number(v.total_maintenance_cost || 0) + Number(v.total_fuel_cost || 0),
     }))
     .sort((a, b) => b.totalCost - a.totalCost)
     .slice(0, 5)

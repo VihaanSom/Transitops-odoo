@@ -617,6 +617,11 @@ export function Trips() {
                     step={10}
                     value={formState.cargo_weight || ''}
                     onChange={handleInputChange}
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) {
+                        e.preventDefault()
+                      }
+                    }}
                     placeholder="700"
                     className="input input-bordered w-full text-sm tabular-nums rounded-lg"
                   />
@@ -638,6 +643,11 @@ export function Trips() {
                     min={1}
                     value={formState.planned_distance || ''}
                     onChange={handleInputChange}
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) {
+                        e.preventDefault()
+                      }
+                    }}
                     placeholder="38"
                     className="input input-bordered w-full text-sm tabular-nums rounded-lg"
                   />
