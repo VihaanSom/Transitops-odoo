@@ -1,4 +1,4 @@
-import type { DriverStatus } from './models'
+
 
 // -------------------------------------------------
 // Auth API Types
@@ -10,6 +10,8 @@ export type UserRole = 'Fleet Manager' | 'Dispatcher' | 'Safety Officer' | 'Fina
 /** User object returned from auth endpoints */
 export interface AuthUser {
   id: string
+  first_name?: string
+  last_name?: string
   email: string
   role: UserRole
 }
