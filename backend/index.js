@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// ── Routes ──────────────────────────────────────────────────────────────────
+app.use('/api/trips', require('./src/routes/trip.routes'));
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
