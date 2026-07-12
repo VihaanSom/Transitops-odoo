@@ -17,7 +17,7 @@ const router = Router();
 router.get(
   '/',
   verifyToken,
-  requireRole(['Dispatcher', 'Financial Analyst']),
+  requireRole('Dispatcher', 'Financial Analyst'),
   controller.getAllTrips,
 );
 
@@ -25,7 +25,7 @@ router.get(
 router.get(
   '/:id',
   verifyToken,
-  requireRole(['Dispatcher', 'Financial Analyst']),
+  requireRole('Dispatcher', 'Financial Analyst'),
   controller.getTripById,
 );
 
@@ -33,7 +33,7 @@ router.get(
 router.post(
   '/',
   verifyToken,
-  requireRole(['Dispatcher']),
+  requireRole('Dispatcher'),
   validate(createTripSchema),
   controller.createTrip,
 );
@@ -42,7 +42,7 @@ router.post(
 router.patch(
   '/:id/dispatch',
   verifyToken,
-  requireRole(['Dispatcher']),
+  requireRole('Dispatcher'),
   validate(dispatchTripSchema),
   controller.dispatchTrip,
 );
@@ -51,7 +51,7 @@ router.patch(
 router.patch(
   '/:id/complete',
   verifyToken,
-  requireRole(['Dispatcher']),
+  requireRole('Dispatcher'),
   validate(completeTripSchema),
   controller.completeTrip,
 );
@@ -60,7 +60,7 @@ router.patch(
 router.patch(
   '/:id/cancel',
   verifyToken,
-  requireRole(['Dispatcher']),
+  requireRole('Dispatcher'),
   validate(cancelTripSchema),
   controller.cancelTrip,
 );

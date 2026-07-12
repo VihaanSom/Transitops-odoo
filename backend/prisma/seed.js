@@ -2,17 +2,17 @@
  * TransitOps Database Seed Script
  *
  * Seeds the database with realistic sample data for development/testing.
- * NOTE: Passwords are stored in PLAIN TEXT for testing only.
- *       Never do this in production — use bcrypt.
+ * Passwords are hashed with bcrypt (saltRounds=10) so the auth login endpoint works.
+ * Plain-text passwords are printed at the end for reference.
  *
- * Usage: node prisma/seed.js
+ * Usage: node prisma/seed.js  (or: npm run seed)
  */
 
 require('dotenv').config();
+const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -20,6 +20,9 @@ const pool = new Pool({
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+
+const PLAIN_PASSWORD = 'password123';
+const SALT_ROUNDS = 10;
 
 async function main() {
   console.log('🌱 Starting seed...\n');
@@ -31,11 +34,13 @@ async function main() {
 
   // ── 2. Users (one per role, hashed passwords) ─────────────
   console.log('  👤 Seeding users...');
-  const password_hash = await bcrypt.hash('password123', 10);
+  const password_hash = await bcrypt.hash(PLAIN_PASSWORD, SALT_ROUNDS);
   
   const users = await Promise.all([
     prisma.users.create({
       data: {
+        first_name: 'Amit',
+        last_name: 'Patel',
         role: 'Fleet Manager',
         email: 'fleet@transitops.com',
         password_hash,
@@ -43,6 +48,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Priya',
+        last_name: 'Sharma',
         role: 'Safety Officer',
         email: 'safety@transitops.com',
         password_hash,
@@ -50,6 +57,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Raj',
+        last_name: 'Singh',
         role: 'Dispatcher',
         email: 'dispatch@transitops.com',
         password_hash,
@@ -57,6 +66,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Sneha',
+        last_name: 'Reddy',
         role: 'Financial Analyst',
         email: 'finance@transitops.com',
         password_hash,
