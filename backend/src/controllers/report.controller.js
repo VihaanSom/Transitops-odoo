@@ -12,4 +12,14 @@ async function getVehicleAnalytics(req, res, next) {
   }
 }
 
-module.exports = { getVehicleAnalytics };
+// ── GET /api/reports/monthly-revenue ─────────────────────────────────────────
+async function getMonthlyRevenue(req, res, next) {
+  try {
+    const data = await reportService.getMonthlyRevenue();
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { getVehicleAnalytics, getMonthlyRevenue };
