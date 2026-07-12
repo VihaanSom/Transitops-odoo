@@ -13,51 +13,8 @@ import { fetchVehicles, createVehicle } from '../services/vehicleService'
 import type { Vehicle, CreateVehiclePayload, VehicleStatus } from '../types/api'
 
 // -------------------------------------------------
-// Constants & Mock Fallback Data
+// Constants
 // -------------------------------------------------
-
-const MOCK_VEHICLES: Vehicle[] = [
-  {
-    id: '1',
-    registration_number: 'GJ01AB4521',
-    name_model: 'VAN-05',
-    vehicle_type: 'Van',
-    max_load_capacity: 500,
-    odometer: 74000,
-    acquisition_cost: 620000,
-    status: 'available',
-  },
-  {
-    id: '2',
-    registration_number: 'GJ01AB9981',
-    name_model: 'TRUCK-11',
-    vehicle_type: 'Truck',
-    max_load_capacity: 5000,
-    odometer: 182000,
-    acquisition_cost: 2450000,
-    status: 'on_trip',
-  },
-  {
-    id: '3',
-    registration_number: 'GJ01AB1120',
-    name_model: 'MINI-03',
-    vehicle_type: 'Mini',
-    max_load_capacity: 1000,
-    odometer: 66000,
-    acquisition_cost: 410000,
-    status: 'in_shop',
-  },
-  {
-    id: '4',
-    registration_number: 'GJ01AB0087',
-    name_model: 'VAN-09',
-    vehicle_type: 'Van',
-    max_load_capacity: 750,
-    odometer: 241900,
-    acquisition_cost: 590000,
-    status: 'retired',
-  },
-]
 
 const STATUS_CONFIG: Record<VehicleStatus, { label: string; badgeClass: string }> = {
   available: { label: 'Available', badgeClass: 'badge-success' },
@@ -108,9 +65,8 @@ export function Vehicles() {
         status: statusFilter,
       })
       setVehicles(data)
-    } catch {
-      // Fallback to mock data if API is not running/accessible
-      setVehicles(MOCK_VEHICLES)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load vehicles.')
     } finally {
       setIsLoading(false)
     }

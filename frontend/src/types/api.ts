@@ -175,6 +175,7 @@ export interface MaintenanceRecord {
   cost?: number
   status: MaintenanceStatus
   created_at?: string
+  opened_at?: string
   closed_at?: string
   vehicle?: Vehicle | { id: string; registration_number: string; name_model: string; vehicle_type?: string }
 }
