@@ -12,7 +12,8 @@ const PORT = process.env.PORT || 3000;
 //Global middleware
 app.use(express.json());
 
-//Routes
+// ── Routes ──────────────────────────────────────────────────────────────────
+app.use('/api/trips', require('./src/routes/trip.routes'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
