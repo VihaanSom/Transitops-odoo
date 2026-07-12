@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -122,6 +123,18 @@ model vehicles {
   maintenance_logs    maintenance_logs[]
   trips               trips[]
   vehicle_documents   vehicle_documents[]
+}
+
+view v_vehicle_analytics {
+  vehicle_id             Int?
+  registration_number    String?  @db.VarChar(50)
+  acquisition_cost       Decimal? @db.Decimal(12, 2)
+  total_revenue          Decimal? @db.Decimal
+  total_maintenance_cost Decimal? @db.Decimal
+  total_fuel_cost        Decimal? @db.Decimal
+  total_fuel_liters      Decimal? @db.Decimal
+  total_distance         Decimal? @db.Decimal
+  vehicle_roi            Decimal? @db.Decimal
 }
 
 enum driver_status {
