@@ -71,24 +71,8 @@ export function Maintenance() {
         setVehicleId('')
       }
     } catch (err) {
-      console.warn('Failed to fetch available vehicles from API, using fallback:', err)
-      // Fallback available vehicles if backend offline
-      const mockAvail: Vehicle[] = [
-        {
-          id: '1',
-          registration_number: 'GJ01AB4521',
-          name_model: 'VAN-05',
-          vehicle_type: 'Van',
-          max_load_capacity: 500,
-          odometer: 74000,
-          acquisition_cost: 620000,
-          status: 'available',
-        },
-      ]
-      setAvailableVehicles(mockAvail)
-      if (!vehicleId && mockAvail.length > 0) {
-        setVehicleId(mockAvail[0]?.id || '')
-      }
+      console.error('Failed to fetch available vehicles:', err)
+      showToast('Could not fetch available vehicles.', 'error')
     } finally {
       setIsLoadingVehicles(false)
     }
