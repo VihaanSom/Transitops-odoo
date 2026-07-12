@@ -635,7 +635,7 @@ export function Trips() {
                   className={`btn btn-sm rounded-full px-6 font-semibold shadow-sm transition-all ${
                     isCapacityExceeded
                       ? 'btn-disabled bg-base-300 text-base-content/40 cursor-not-allowed'
-                      : 'btn-info text-info-content'
+                      : 'btn-warning'
                   }`}
                 >
                   {isSubmitting ? (

@@ -694,6 +694,8 @@ function KpiStrip({ fuelLogs, expenses, isLoading }: KpiStripProps) {
       icon: <CurrencyInr size={20} weight="duotone" />,
       colorClass: 'text-primary',
       bgClass: 'bg-primary/10',
+      valueStyle: { color: '#065f52', fontWeight: 800 },
+      iconStyle: { backgroundColor: '#0883701a', color: '#088370' },
     },
   ]
 
@@ -704,7 +706,10 @@ function KpiStrip({ fuelLogs, expenses, isLoading }: KpiStripProps) {
           key={kpi.label}
           className="card bg-base-200 border border-base-300 shadow-sm p-4 flex flex-row items-center gap-3"
         >
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${kpi.bgClass} ${kpi.colorClass}`}>
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${kpi.iconStyle ? '' : `${kpi.bgClass} ${kpi.colorClass}`}`}
+            style={kpi.iconStyle ?? {}}
+          >
             {kpi.icon}
           </div>
           <div className="min-w-0">
@@ -712,7 +717,10 @@ function KpiStrip({ fuelLogs, expenses, isLoading }: KpiStripProps) {
             {isLoading ? (
               <div className="skeleton h-5 w-24 mt-1" />
             ) : (
-              <p className={`text-base font-bold tabular-nums ${kpi.colorClass}`}>{kpi.value}</p>
+              <p
+                className={`text-base tabular-nums ${kpi.valueStyle ? '' : `font-bold ${kpi.colorClass}`}`}
+                style={kpi.valueStyle ?? {}}
+              >{kpi.value}</p>
             )}
           </div>
         </div>
@@ -853,7 +861,7 @@ export function FuelExpenses() {
           <button
             type="button"
             onClick={() => setIsFuelModalOpen(true)}
-            className="btn btn-success btn-sm rounded-full px-4 font-semibold shadow-sm flex items-center gap-1.5"
+            className="btn btn-warning btn-sm rounded-full px-4 font-semibold shadow-sm flex items-center gap-1.5"
           >
             <Plus size={16} weight="bold" />
             Log Fuel

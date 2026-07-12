@@ -206,7 +206,7 @@ export function Drivers() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-base-content flex items-center gap-2.5">
-            <UsersThree size={26} weight="duotone" className="text-primary" />
+            <UsersThree size={26} weight="duotone" style={{ color: '#088370' }} />
             Drivers &amp; Safety Profiles
           </h1>
           <p className="text-sm text-base-content/50 mt-0.5">
@@ -459,7 +459,7 @@ export function Drivers() {
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-base-300 px-6 py-4 bg-base-200/50">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: '#0883701a', color: '#088370' }}>
                     <UsersThree size={20} weight="duotone" />
                   </div>
                   <div>

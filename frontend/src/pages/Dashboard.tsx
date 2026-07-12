@@ -135,21 +135,21 @@ export function Dashboard() {
               key={card.key}
               className="card bg-base-200 border border-base-300 shadow-sm"
             >
-              <div className="card-body p-4 gap-2">
+              <div className="card-body p-4 gap-0 flex flex-col justify-between min-h-[90px]">
                 {isLoading ? (
                   <>
                     <div className="skeleton h-3 w-20" />
-                    <div className="skeleton h-8 w-14 mt-1" />
+                    <div className="skeleton h-8 w-14 mt-auto" />
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-start justify-between">
                       <span className="text-xs font-medium uppercase tracking-wider text-base-content/50 leading-tight">
                         {card.label}
                       </span>
                       <Icon size={18} weight="duotone" className={card.accentColor} />
                     </div>
-                    <span className="text-2xl font-bold text-base-content tabular-nums">
+                    <span className="text-2xl font-bold text-base-content tabular-nums mt-auto pt-2">
                       {card.format === 'percent'
                         ? `${Math.round(value)}%`
                         : String(value).padStart(2, '0')}

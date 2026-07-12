@@ -1,14 +1,14 @@
 import { NavLink, useLocation } from 'react-router'
 import {
-  SquaresFour,
-  ChartBar,
+  TruckTrailer,
   Truck,
   UsersThree,
   Path,
   Wrench,
-  CurrencyDollar,
+  CurrencyInr,
   ChartLine,
   GearSix,
+  SquaresFour,
 } from '@phosphor-icons/react'
 
 // -------------------------------------------------
@@ -27,7 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Drivers', path: '/drivers', icon: UsersThree },
   { label: 'Trips', path: '/trips', icon: Path },
   { label: 'Maintenance', path: '/maintenance', icon: Wrench },
-  { label: 'Fuel & Expenses', path: '/fuel-expenses', icon: CurrencyDollar },
+  { label: 'Fuel & Expenses', path: '/fuel-expenses', icon: CurrencyInr },
   { label: 'Analytics', path: '/analytics', icon: ChartLine },
 ]
 
@@ -68,7 +68,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Branding */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-base-300">
-          <ChartBar size={28} weight="duotone" className="text-primary" />
+          <TruckTrailer size={28} weight="duotone" style={{ color: '#088370' }} />
           <span className="text-lg font-semibold text-base-content">
             TransitOps
           </span>
@@ -89,12 +89,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                       ${
                         isActive
-                          ? 'bg-primary/10 text-primary border-l-3 border-primary'
+                          ? 'border-l-3'
                           : 'text-base-content/60 hover:bg-base-300 hover:text-base-content'
                       }
                     `}
+                    style={isActive ? { backgroundColor: '#088370' + '1a', color: '#088370', borderColor: '#088370' } : {}}
                   >
-                    <Icon size={20} weight={isActive ? 'duotone' : 'duotone'} />
+                    <Icon size={20} weight="duotone" />
                     {item.label}
                   </NavLink>
                 </li>
@@ -118,10 +119,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                       ${
                         isActive
-                          ? 'bg-primary/10 text-primary'
+                          ? ''
                           : 'text-base-content/60 hover:bg-base-300 hover:text-base-content'
                       }
                     `}
+                    style={isActive ? { backgroundColor: '#088370' + '1a', color: '#088370' } : {}}
                   >
                     <Icon size={20} weight="duotone" />
                     {item.label}

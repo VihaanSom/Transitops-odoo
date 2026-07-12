@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router'
 import {
-  SquaresFour,
+  TruckTrailer,
   EnvelopeSimple,
   Lock,
   CaretDown,
@@ -106,10 +106,11 @@ export function Register() {
         className="hidden lg:flex lg:w-[35%] flex-col justify-between bg-base-200 px-12 py-10"
       >
         <div>
-          <SquaresFour
+          <TruckTrailer
             size={48}
             weight="duotone"
-            className="text-primary mb-4"
+            style={{ color: '#088370' }}
+            className="mb-4"
           />
           <h1 className="text-2xl font-semibold text-base-content">
             TransitOps
@@ -134,10 +135,11 @@ export function Register() {
         <div className="w-full max-w-md">
           {/* Mobile-only branding */}
           <div className="mb-8 lg:hidden">
-            <SquaresFour
+            <TruckTrailer
               size={36}
               weight="duotone"
-              className="text-primary mb-3"
+              style={{ color: '#088370' }}
+              className="mb-3"
             />
             <h1 className="text-xl font-semibold text-base-content">
               TransitOps

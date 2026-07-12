@@ -8,7 +8,7 @@ import {
   WarningCircle,
   X,
   Truck,
-  CurrencyDollar,
+  CurrencyInr,
   CalendarBlank,
   Tag,
 } from '@phosphor-icons/react'
@@ -255,7 +255,7 @@ export function Maintenance() {
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body p-5">
               <div className="flex items-center gap-2 border-b border-base-300/60 pb-3.5 mb-4">
-                <div className="p-1.5 rounded-lg bg-warning/10 text-warning">
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#0883701a', color: '#088370' }}>
                   <Wrench size={18} weight="duotone" />
                 </div>
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
@@ -274,7 +274,7 @@ export function Maintenance() {
                 {/* Vehicle Select Input */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <Truck size={14} weight="duotone" className="text-primary" />
+                    <Truck size={14} weight="duotone" style={{ color: '#088370' }} />
                     Vehicle
                   </label>
                   <select
@@ -309,7 +309,7 @@ export function Maintenance() {
                 {/* Service Type / Description */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <Wrench size={14} weight="duotone" className="text-primary" />
+                    <Wrench size={14} weight="duotone" style={{ color: '#088370' }} />
                     Service Type
                   </label>
                   <input
@@ -326,7 +326,7 @@ export function Maintenance() {
                 {/* Cost Input */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <CurrencyDollar size={14} weight="duotone" className="text-primary" />
+                    <CurrencyInr size={14} weight="duotone" style={{ color: '#088370' }} />
                     Cost (&#8377;)
                   </label>
                   <input
@@ -374,7 +374,7 @@ export function Maintenance() {
                   <button
                     type="submit"
                     disabled={isSubmitting || isLoadingVehicles || availableVehicles.length === 0}
-                    className="btn btn-primary w-full rounded-full gap-2 font-semibold shadow-sm"
+                    className="btn btn-warning w-full rounded-full gap-2 font-semibold shadow-sm"
                   >
                     <Plus size={18} weight="bold" />
                     {isSubmitting ? 'Logging...' : 'Save'}
@@ -392,7 +392,7 @@ export function Maintenance() {
             <div className="card-body p-5">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-base-300/60 pb-3.5 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                  <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#0883701a', color: '#088370' }}>
                     <Tag size={18} weight="duotone" />
                   </div>
                   <h2 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
@@ -591,7 +591,7 @@ export function Maintenance() {
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-base-content/80 flex items-center gap-1.5">
-                    <CurrencyDollar size={14} weight="duotone" className="text-primary" />
+                    <CurrencyInr size={14} weight="duotone" style={{ color: '#088370' }} />
                     Final Cost (&#8377;)
                   </label>
                   <input
@@ -622,7 +622,7 @@ export function Maintenance() {
                   <button
                     type="submit"
                     disabled={isClosing}
-                    className="btn btn-success btn-sm rounded-full px-5 gap-2 font-semibold text-white shadow-sm"
+                    className="btn btn-warning btn-sm rounded-full px-5 gap-2 font-semibold shadow-sm"
                   >
                     <CheckCircle size={16} weight="bold" />
                     {isClosing ? 'Closing Ticket...' : 'Confirm & Close Ticket'}
