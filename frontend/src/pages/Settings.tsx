@@ -9,8 +9,12 @@ import {
   Building,
   CurrencyInr,
   Path,
+  UserCircle,
+  WarningCircle,
 } from '@phosphor-icons/react'
 import { useToast } from '../components/feedback/Toast'
+import { fetchProfile, updateProfile } from '../services/profileService'
+import type { UserProfile } from '../services/profileService'
 
 // -------------------------------------------------
 // Types & Defaults
@@ -109,10 +113,20 @@ function AccessIndicator({ type }: { type: AccessType }) {
 // -------------------------------------------------
 export function Settings() {
   const { showToast } = useToast()
+
+  // ---- General Settings (localStorage) ----
   const [settings, setSettings] = useState<GeneralSettingsState>(DEFAULT_SETTINGS)
   const [isSaving, setIsSaving] = useState(false)
 
-  // Load persisted settings on mount
+  // ---- Profile State (API-backed) ----
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
+  const [profileError, setProfileError] = useState<string | null>(null)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
+
+  // Load persisted local settings on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(SETTINGS_STORAGE_KEY)
@@ -129,6 +143,25 @@ export function Settings() {
     }
   }, [])
 
+  // Load profile from API on mount
+  useEffect(() => {
+    async function loadProfile() {
+      setIsLoadingProfile(true)
+      setProfileError(null)
+      try {
+        const data = await fetchProfile()
+        setProfile(data)
+        setFirstName(data.first_name || '')
+        setLastName(data.last_name || '')
+      } catch (err) {
+        setProfileError(err instanceof Error ? err.message : 'Failed to load profile.')
+      } finally {
+        setIsLoadingProfile(false)
+      }
+    }
+    void loadProfile()
+  }, [])
+
   const handleSaveSettings = (e: FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
@@ -140,6 +173,28 @@ export function Settings() {
       showToast('Could not save settings.', 'error')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleSaveProfile = async (e: FormEvent) => {
+    e.preventDefault()
+    setIsSavingProfile(true)
+    setProfileError(null)
+    try {
+      const updated = await updateProfile({
+        first_name: firstName,
+        last_name: lastName,
+      })
+      setProfile(updated)
+      setFirstName(updated.first_name || '')
+      setLastName(updated.last_name || '')
+      showToast('Profile updated successfully!', 'success')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to update profile.'
+      setProfileError(msg)
+      showToast(msg, 'error')
+    } finally {
+      setIsSavingProfile(false)
     }
   }
 
@@ -157,8 +212,101 @@ export function Settings() {
 
       {/* Two-Column Responsive Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: General Settings Form (lg:col-span-5) */}
-        <div className="lg:col-span-5">
+        {/* Left Column: Profile + General Settings (lg:col-span-5) */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* ---- PROFILE SECTION (API-backed) ---- */}
+          <div className="card bg-base-100 border border-base-300 shadow-sm">
+            <div className="card-body p-5">
+              <div className="flex items-center gap-2 border-b border-base-300/60 pb-3.5 mb-4">
+                <div className="p-1.5 rounded-lg bg-info/10 text-info">
+                  <UserCircle size={18} weight="duotone" />
+                </div>
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+                  PROFILE
+                </h2>
+                {profile && (
+                  <span className="ml-auto badge badge-ghost badge-sm font-mono text-[10px]">
+                    {profile.role}
+                  </span>
+                )}
+              </div>
+
+              {isLoadingProfile ? (
+                <div className="flex items-center justify-center py-8">
+                  <span className="loading loading-spinner loading-sm text-info" />
+                </div>
+              ) : profileError && !profile ? (
+                <div className="flex items-center gap-2.5 rounded-lg border border-error/30 bg-error/10 px-3.5 py-2.5 text-xs text-error font-medium">
+                  <WarningCircle size={16} weight="duotone" className="shrink-0" />
+                  <span>{profileError}</span>
+                </div>
+              ) : (
+                <form onSubmit={(e) => void handleSaveProfile(e)} className="space-y-4">
+                  {/* Email (read-only) */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-base-content/80">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={profile?.email || ''}
+                      disabled
+                      className="input input-bordered w-full text-sm font-medium bg-base-200/50 text-base-content/60 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* First Name */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-base-content/80">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="e.g. Raven"
+                      className="input input-bordered w-full text-sm font-medium bg-base-100 focus:border-info"
+                    />
+                  </div>
+
+                  {/* Last Name */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-base-content/80">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="e.g. Kumar"
+                      className="input input-bordered w-full text-sm font-medium bg-base-100 focus:border-info"
+                    />
+                  </div>
+
+                  {/* Profile Error Inline */}
+                  {profileError && (
+                    <div className="flex items-center gap-2 rounded-lg border border-error/30 bg-error/10 px-3 py-2 text-xs text-error font-medium">
+                      <WarningCircle size={14} weight="duotone" className="shrink-0" />
+                      <span>{profileError}</span>
+                    </div>
+                  )}
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      className="btn btn-info rounded-full px-6 gap-2 font-semibold shadow-sm"
+                    >
+                      <FloppyDisk size={18} weight="bold" />
+                      {isSavingProfile ? 'Saving...' : 'Update profile'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+
+          {/* ---- GENERAL SETTINGS SECTION (localStorage) ---- */}
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body p-5">
               <div className="flex items-center gap-2 border-b border-base-300/60 pb-3.5 mb-4">

@@ -14,4 +14,12 @@ router.get(
   controller.getVehicleAnalytics,
 );
 
+// GET /api/reports/monthly-revenue — completed trip revenue aggregated by month
+router.get(
+  '/monthly-revenue',
+  verifyToken,
+  requireRole('Financial Analyst', 'Fleet Manager'),
+  controller.getMonthlyRevenue,
+);
+
 module.exports = router;
