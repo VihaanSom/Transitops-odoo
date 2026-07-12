@@ -66,7 +66,7 @@ export function Maintenance() {
       setAvailableVehicles(data)
       // If our current selection is not available, pick first available or empty
       if (data.length > 0 && (!vehicleId || !data.some((v) => v.id === vehicleId))) {
-        setVehicleId(data[0].id)
+        setVehicleId(data[0]?.id || '')
       } else if (data.length === 0) {
         setVehicleId('')
       }
@@ -87,7 +87,7 @@ export function Maintenance() {
       ]
       setAvailableVehicles(mockAvail)
       if (!vehicleId && mockAvail.length > 0) {
-        setVehicleId(mockAvail[0].id)
+        setVehicleId(mockAvail[0]?.id || '')
       }
     } finally {
       setIsLoadingVehicles(false)

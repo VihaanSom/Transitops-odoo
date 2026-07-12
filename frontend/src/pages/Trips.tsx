@@ -203,8 +203,8 @@ export function Trips() {
       // Set default selected vehicle & driver if form is empty
       setFormState((prev) => ({
         ...prev,
-        vehicle_id: prev.vehicle_id || (vData[0]?.id ?? MOCK_AVAILABLE_VEHICLES[0].id),
-        driver_id: prev.driver_id || (dData[0]?.id ?? MOCK_AVAILABLE_DRIVERS[0].id),
+        vehicle_id: prev.vehicle_id || (vData[0]?.id ?? MOCK_AVAILABLE_VEHICLES[0]?.id ?? ''),
+        driver_id: prev.driver_id || (dData[0]?.id ?? MOCK_AVAILABLE_DRIVERS[0]?.id ?? ''),
       }))
     } catch {
       setAvailableVehicles(MOCK_AVAILABLE_VEHICLES)
@@ -752,14 +752,14 @@ export function Trips() {
                   typeof trip.vehicle === 'object' && trip.vehicle?.name_model
                     ? trip.vehicle.name_model
                     : typeof trip.vehicle === 'string'
-                      ? trip.vehicle
+                      ? (trip.vehicle as string)
                       : 'Unassigned'
 
                 const driverDisplay =
                   typeof trip.driver === 'object' && trip.driver?.name
                     ? trip.driver.name.toUpperCase()
                     : typeof trip.driver === 'string'
-                      ? trip.driver.toUpperCase()
+                      ? (trip.driver as string).toUpperCase()
                       : ''
 
                 const combinedInfo =
