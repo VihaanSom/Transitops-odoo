@@ -1,6 +1,5 @@
 import { apiFetch } from './api'
-import type { Driver, DriverStatus } from '../types/models'
-import type { CreateDriverPayload } from '../types/api'
+import type { Driver, DriverStatus, CreateDriverPayload } from '../types/api'
 
 /**
  * GET /drivers
@@ -16,9 +15,8 @@ export async function fetchDrivers(params?: { status?: string }): Promise<Driver
   return apiFetch<Driver[]>(endpoint)
 }
 
-
 // -------------------------------------------------
-// Mock data — replace with apiFetch calls later
+// Mock data & helper functions for local / offline mode
 // -------------------------------------------------
 
 let MOCK_DRIVERS: Driver[] = [
@@ -111,8 +109,9 @@ export async function createDriver(payload: CreateDriverPayload): Promise<Driver
 
 export async function updateDriverStatus(id: string, status: DriverStatus): Promise<Driver> {
   await delay(300)
-  const idx = MOCK_DRIVERS.findIndex((d) => d.id === id)
-  if (idx === -1) throw new Error('Driver not found.')
-  MOCK_DRIVERS = MOCK_DRIVERS.map((d) => (d.id === id ? { ...d, status } : d))
-  return MOCK_DRIVERS[idx]
+  const existingDriver = MOCK_DRIVERS.find((d) => d.id === id)
+  if (!existingDriver) throw new Error('Driver not found.')
+  const updatedDriver: Driver = { ...existingDriver, status }
+  MOCK_DRIVERS = MOCK_DRIVERS.map((d) => (d.id === id ? updatedDriver : d))
+  return updatedDriver
 }
