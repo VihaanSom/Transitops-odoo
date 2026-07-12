@@ -9,7 +9,6 @@ import { SearchInput } from '../components/ui/SearchInput'
 import { DriverTable } from '../components/features/DriverTable'
 import { DriverStatusToggleBar } from '../components/features/DriverStatusToggleBar'
 import { AddDriverModal } from '../components/features/AddDriverModal'
-import { RuleNotice } from '../components/features/RuleNotice'
 
 export function Drivers() {
   const { user } = useAuth()
@@ -95,9 +94,6 @@ export function Drivers() {
           onStatusUpdated={handleStatusUpdated}
         />
       )}
-
-      {/* Rule notice */}
-      <RuleNotice />
 
       {/* Add Driver modal — Safety Officer only */}
       {isSafetyOfficer && (
