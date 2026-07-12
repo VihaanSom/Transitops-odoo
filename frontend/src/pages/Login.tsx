@@ -254,6 +254,28 @@ export function Login() {
             </Link>
           </p>
 
+          {/* Dev-Only Bypass Button for UI Testing */}
+          {import.meta.env.DEV && (
+            <div className="mt-6 border-t border-base-content/10 pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthData('dev-mock-token', {
+                    id: 'dev-user-001',
+                    first_name: 'Raven',
+                    last_name: 'K.',
+                    email: 'raven@transitops.in',
+                    role: 'Dispatcher',
+                  })
+                  navigate('/dashboard', { replace: true })
+                }}
+                className="btn btn-outline btn-info btn-sm w-full font-normal"
+              >
+                ⚡ Dev Bypass: Jump to Dashboard
+              </button>
+            </div>
+          )}
+
           {/* Mobile-only footer */}
           <p className="mt-10 text-center text-xs font-medium uppercase tracking-wider text-base-content/30 lg:hidden">
             TransitOps &copy; 2026 &middot; RBAC Enabled

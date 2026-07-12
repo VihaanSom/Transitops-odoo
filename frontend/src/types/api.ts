@@ -8,6 +8,8 @@ export type UserRole = 'Fleet Manager' | 'Dispatcher' | 'Safety Officer' | 'Fina
 /** User object returned from auth endpoints */
 export interface AuthUser {
   id: string
+  first_name: string | null
+  last_name: string | null
   email: string
   role: UserRole
 }
@@ -26,8 +28,8 @@ export interface LoginResponse {
 
 /** POST /auth/register request payload */
 export interface RegisterPayload {
-  firstName: string
-  lastName: string
+  first_name?: string
+  last_name?: string
   email: string
   password: string
   role: UserRole
@@ -36,6 +38,21 @@ export interface RegisterPayload {
 /** POST /auth/register successful response */
 export interface RegisterResponse {
   user: AuthUser
+}
+
+// -------------------------------------------------
+// Dashboard API Types
+// -------------------------------------------------
+
+/** GET /dashboard/kpis response */
+export interface DashboardKpis {
+  activeVehicles: number
+  availableVehicles: number
+  vehiclesInMaintenance: number
+  activeTrips: number
+  pendingTrips: number
+  driversOnDuty: number
+  fleetUtilization: number
 }
 
 // -------------------------------------------------

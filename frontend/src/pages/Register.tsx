@@ -75,8 +75,8 @@ export function Register() {
 
     try {
       await register({
-        firstName: form.firstName,
-        lastName: form.lastName,
+        first_name: form.firstName,
+        last_name: form.lastName,
         email: form.email,
         password: form.password,
         role: form.role,
