@@ -630,14 +630,14 @@ export function Trips() {
                   typeof trip.vehicle === 'object' && trip.vehicle?.name_model
                     ? trip.vehicle.name_model
                     : typeof trip.vehicle === 'string'
-                      ? trip.vehicle
+                      ? (trip.vehicle as string)
                       : 'Unassigned'
 
                 const driverDisplay =
                   typeof trip.driver === 'object' && trip.driver?.name
                     ? trip.driver.name.toUpperCase()
                     : typeof trip.driver === 'string'
-                      ? trip.driver.toUpperCase()
+                      ? (trip.driver as string).toUpperCase()
                       : ''
 
                 const combinedInfo =
