@@ -26,5 +26,5 @@ export async function fetchKpis(): Promise<DashboardKpis> {
  * Requires Dispatcher or Financial Analyst role — returns [] otherwise.
  */
 export async function fetchRecentTrips(): Promise<RecentTrip[]> {
-  return apiFetch<RecentTrip[]>('/trips')
+  return apiFetch<RecentTrip[]>('/trips?limit=5')
 }
