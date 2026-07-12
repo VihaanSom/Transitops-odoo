@@ -4,6 +4,7 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
 import { Vehicles } from './pages/Vehicles'
+import { FuelExpenses } from './pages/FuelExpenses'
 import { AppShell } from './components/layout/AppShell'
 
 // -------------------------------------------------
@@ -45,7 +46,7 @@ export default function App() {
               <Route path="/drivers" element={<PlaceholderPage title="Driver Management" />} />
               <Route path="/trips" element={<PlaceholderPage title="Trip Management" />} />
               <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
-              <Route path="/fuel-expenses" element={<PlaceholderPage title="Fuel & Expenses" />} />
+              <Route path="/fuel-expenses" element={<FuelExpenses />} />
               <Route path="/analytics" element={<PlaceholderPage title="Analytics" />} />
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
             </Route>
