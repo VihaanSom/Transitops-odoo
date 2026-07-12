@@ -104,24 +104,24 @@ export function Dashboard() {
       </div>
 
       {/* ---- Filters ---- */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-base-content/50">
+      <div className="flex items-center gap-3 overflow-x-auto pb-1">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-base-content/50 shrink-0">
           <Funnel size={16} weight="duotone" />
           Filters
         </div>
-        <select className="select select-bordered select-sm text-sm min-w-36">
+        <select className="select select-bordered select-sm text-sm w-36 shrink-0 rounded-lg">
           <option>Vehicle Type: All</option>
           <option>Van</option>
           <option>Truck</option>
           <option>Mini</option>
         </select>
-        <select className="select select-bordered select-sm text-sm min-w-32">
+        <select className="select select-bordered select-sm text-sm w-36 shrink-0 rounded-lg">
           <option>Status: All</option>
           <option>Available</option>
           <option>On Trip</option>
           <option>In Shop</option>
         </select>
-        <select className="select select-bordered select-sm text-sm min-w-32">
+        <select className="select select-bordered select-sm text-sm w-36 shrink-0 rounded-lg">
           <option>Region: All</option>
           <option>North</option>
           <option>South</option>
