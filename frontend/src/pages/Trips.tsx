@@ -164,6 +164,27 @@ export function Trips() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
 
+  // Saved Depots State from localStorage
+  const [availableDepots, setAvailableDepots] = useState<string[]>([
+    'Gandhinagar Depot',
+    'Ahmedabad Hub',
+    'Sanand Warehouse',
+  ])
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('depots')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAvailableDepots(parsed)
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to parse saved depots from localStorage, using default array.', err)
+    }
+  }, [])
+
   // ---- Fetch Data ----
   async function loadAllData() {
     setIsLoading(true)
@@ -464,17 +485,24 @@ export function Trips() {
                   Source <span className="text-error">*</span>
                 </label>
                 <div className="relative">
-                  <input
+                  <select
                     id="source"
                     name="source"
-                    type="text"
                     required
-                    placeholder="e.g. Gandhinagar Depot"
                     value={formState.source}
                     onChange={handleInputChange}
-                    className="input input-bordered w-full text-sm rounded-lg pl-9"
-                  />
-                  <MapPin size={16} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                    className="select select-bordered w-full text-sm rounded-lg pl-9"
+                  >
+                    <option value="" disabled>
+                      Select Source Depot
+                    </option>
+                    {availableDepots.map((depot) => (
+                      <option key={`src-${depot}`} value={depot}>
+                        {depot}
+                      </option>
+                    ))}
+                  </select>
+                  <MapPin size={16} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none" />
                 </div>
               </div>
 
@@ -487,17 +515,24 @@ export function Trips() {
                   Destination <span className="text-error">*</span>
                 </label>
                 <div className="relative">
-                  <input
+                  <select
                     id="destination"
                     name="destination"
-                    type="text"
                     required
-                    placeholder="e.g. Ahmedabad Hub"
                     value={formState.destination}
                     onChange={handleInputChange}
-                    className="input input-bordered w-full text-sm rounded-lg pl-9"
-                  />
-                  <ArrowRight size={16} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                    className="select select-bordered w-full text-sm rounded-lg pl-9"
+                  >
+                    <option value="" disabled>
+                      Select Destination Depot
+                    </option>
+                    {availableDepots.map((depot) => (
+                      <option key={`dst-${depot}`} value={depot}>
+                        {depot}
+                      </option>
+                    ))}
+                  </select>
+                  <ArrowRight size={16} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none" />
                 </div>
               </div>
 

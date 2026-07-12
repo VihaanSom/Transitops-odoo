@@ -1,11 +1,16 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 
 const errorHandler = require('./src/middlewares/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // ── Health ────────────────────────────────────────────────────────────────────
