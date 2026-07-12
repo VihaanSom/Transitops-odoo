@@ -46,6 +46,8 @@ async function login(email, password) {
       id: user.id,
       role: user.role,
       email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
     },
   };
 }
@@ -64,6 +66,8 @@ async function register(data) {
       email: data.email,
       role: data.role,
       password_hash,
+      first_name: data.first_name ?? null,
+      last_name: data.last_name ?? null,
     },
   });
 
@@ -72,6 +76,8 @@ async function register(data) {
       id: user.id,
       role: user.role,
       email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
     },
   };
 }
@@ -92,4 +98,44 @@ async function deleteAccount(id) {
   return prisma.users.delete({ where: { id } });
 }
 
-module.exports = { login, register, deleteAccount };
+/**
+ * Fetches the user profile by ID.
+ */
+async function getProfile(id) {
+  const user = await prisma.users.findUnique({ where: { id } });
+  if (!user) {
+    const err = new Error('User not found.');
+    err.statusCode = 404;
+    throw err;
+  }
+  return {
+    id: user.id,
+    role: user.role,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+  };
+}
+
+/**
+ * Updates the user's profile names.
+ */
+async function updateProfile(id, data) {
+  const user = await prisma.users.update({
+    where: { id },
+    data: {
+      first_name: data.first_name !== undefined ? data.first_name : undefined,
+      last_name: data.last_name !== undefined ? data.last_name : undefined,
+    }
+  });
+
+  return {
+    id: user.id,
+    role: user.role,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+  };
+}
+
+module.exports = { login, register, deleteAccount, getProfile, updateProfile };

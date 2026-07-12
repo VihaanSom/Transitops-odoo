@@ -88,6 +88,8 @@ model trips {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model users {
   id            Int       @id @default(autoincrement())
+  first_name    String?   @db.VarChar(100)
+  last_name     String?   @db.VarChar(100)
   role          String    @db.VarChar(50)
   email         String    @unique @db.VarChar(255)
   password_hash String    @db.VarChar(255)

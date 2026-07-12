@@ -43,4 +43,32 @@ async function deleteAccount(req, res, next) {
   }
 }
 
-module.exports = { login, register, deleteAccount };
+/**
+ * GET /api/auth/me
+ * Gets the currently authenticated user's profile.
+ */
+async function getProfile(req, res, next) {
+  try {
+    const id = req.user.id;
+    const profile = await authService.getProfile(id);
+    return res.status(200).json(profile);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/auth/me
+ * Updates the currently authenticated user's profile.
+ */
+async function updateProfile(req, res, next) {
+  try {
+    const id = req.user.id;
+    const profile = await authService.updateProfile(id, req.body);
+    return res.status(200).json(profile);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { login, register, deleteAccount, getProfile, updateProfile };

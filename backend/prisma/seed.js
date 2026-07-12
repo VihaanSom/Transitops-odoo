@@ -39,6 +39,8 @@ async function main() {
   const users = await Promise.all([
     prisma.users.create({
       data: {
+        first_name: 'Amit',
+        last_name: 'Patel',
         role: 'Fleet Manager',
         email: 'fleet@transitops.com',
         password_hash,
@@ -46,6 +48,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Priya',
+        last_name: 'Sharma',
         role: 'Safety Officer',
         email: 'safety@transitops.com',
         password_hash,
@@ -53,6 +57,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Raj',
+        last_name: 'Singh',
         role: 'Dispatcher',
         email: 'dispatch@transitops.com',
         password_hash,
@@ -60,6 +66,8 @@ async function main() {
     }),
     prisma.users.create({
       data: {
+        first_name: 'Sneha',
+        last_name: 'Reddy',
         role: 'Financial Analyst',
         email: 'finance@transitops.com',
         password_hash,

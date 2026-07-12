@@ -61,7 +61,9 @@ async function runTests() {
     body: JSON.stringify({
       email: newEmail,
       password: 'newpassword123',
-      role: 'Fleet Manager'
+      role: 'Fleet Manager',
+      first_name: 'John',
+      last_name: 'Hackathon'
     })
   });
   console.log(`Status: ${res.status}`);
@@ -82,8 +84,7 @@ async function runTests() {
   console.log(await res.json());
   console.log('\n');
 
-  console.log('--- Test Case 8: Delete Account (DELETE /me) ---');
-  // First login with the new user to get a token
+  console.log('--- Fetching token for new user ---');
   const loginRes = await fetch(baseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -92,6 +93,43 @@ async function runTests() {
   const loginData = await loginRes.json();
   const deleteToken = loginData.token;
 
+  console.log('--- Test Case 8: Get Profile (GET /me) ---');
+  if (deleteToken) {
+    res = await fetch('http://localhost:3000/api/auth/me', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${deleteToken}`
+      }
+    });
+    console.log(`Status: ${res.status}`);
+    console.log(await res.json());
+  } else {
+    console.log('Skipping due to missing token.');
+  }
+  console.log('\n');
+
+  console.log('--- Test Case 9: Update Profile (PUT /me) ---');
+  if (deleteToken) {
+    res = await fetch('http://localhost:3000/api/auth/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${deleteToken}`
+      },
+      body: JSON.stringify({
+        first_name: 'UpdatedFirst',
+        last_name: 'UpdatedLast'
+      })
+    });
+    console.log(`Status: ${res.status}`);
+    console.log(await res.json());
+  } else {
+    console.log('Skipping due to missing token.');
+  }
+  console.log('\n');
+
+  console.log('--- Test Case 10: Delete Account (DELETE /me) ---');
   if (deleteToken) {
     res = await fetch('http://localhost:3000/api/auth/me', {
       method: 'DELETE',
