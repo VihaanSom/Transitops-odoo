@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Drivers } from './pages/Drivers'
 import { Vehicles } from './pages/Vehicles'
 import { Trips } from './pages/Trips'
+import { Maintenance } from './pages/Maintenance'
 import { AppShell } from './components/layout/AppShell'
 
 // -------------------------------------------------
@@ -45,13 +46,10 @@ export default function App() {
               <Route path="/fleet" element={<Vehicles />} />
               <Route path="/vehicles" element={<Navigate to="/fleet" replace />} />
               <Route path="/trips" element={<Trips />} />
-
-              {/* Placeholder routes for sidebar nav items */}
-              <Route path="/fleet" element={<PlaceholderPage title="Fleet Management" />} />
               <Route path="/drivers" element={<Drivers />} />
+              <Route path="/maintenance" element={<Maintenance />} />
+
               {/* Placeholder routes for other sidebar nav items */}
-              <Route path="/drivers" element={<PlaceholderPage title="Driver Management" />} />
-              <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
               <Route path="/fuel-expenses" element={<PlaceholderPage title="Fuel & Expenses" />} />
               <Route path="/analytics" element={<PlaceholderPage title="Analytics" />} />
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />

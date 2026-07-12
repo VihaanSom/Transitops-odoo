@@ -159,3 +159,32 @@ export interface CreateDriverPayload {
 export interface UpdateDriverStatusPayload {
   status: DriverStatus
 }
+
+// -------------------------------------------------
+// Maintenance API Types
+// -------------------------------------------------
+
+export type MaintenanceStatus = 'open' | 'closed' | 'in_shop' | 'completed' | string
+
+export interface MaintenanceRecord {
+  id: string
+  vehicle_id: string
+  description: string
+  cost?: number
+  status: MaintenanceStatus
+  created_at?: string
+  closed_at?: string
+  vehicle?: Vehicle | { id: string; registration_number: string; name_model: string; vehicle_type?: string }
+}
+
+export interface CreateMaintenancePayload {
+  vehicle_id: string
+  description: string
+  cost?: number
+}
+
+export interface CloseMaintenancePayload {
+  cost?: number
+  closed_at?: string
+}
+
