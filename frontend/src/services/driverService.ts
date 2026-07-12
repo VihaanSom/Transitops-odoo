@@ -1,6 +1,6 @@
 import { apiFetch } from './api'
 import type { Driver } from '../types/api'
-
+import type { CreateDriverPayload } from '../types/api'
 /**
  * GET /drivers
  * Returns list of drivers, optionally filtered by status.
@@ -13,8 +13,8 @@ export async function fetchDrivers(params?: { status?: string }): Promise<Driver
   const queryString = query.toString()
   const endpoint = queryString ? `/drivers?${queryString}` : '/drivers'
   return apiFetch<Driver[]>(endpoint)
-import type { Driver, DriverStatus } from '../types/models'
-import type { CreateDriverPayload } from '../types/api'
+}
+
 
 // -------------------------------------------------
 // Mock data — replace with apiFetch calls later
