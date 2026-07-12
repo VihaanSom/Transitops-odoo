@@ -17,6 +17,7 @@ import { fetchVehicles } from '../services/vehicleService'
 import { fetchDrivers } from '../services/driverService'
 import { fetchTrips, createTrip, dispatchTrip, completeTrip, cancelTrip } from '../services/tripService'
 import type { Vehicle, Driver, Trip, CreateTripPayload, TripStatus } from '../types/api'
+import { useAuth } from '../context/AuthContext'
 
 const STATUS_BADGE_CONFIG: Record<TripStatus, { label: string; badgeClass: string }> = {
   draft: { label: 'Draft', badgeClass: 'badge-ghost border-base-300 text-base-content/70' },
@@ -30,6 +31,9 @@ const STATUS_BADGE_CONFIG: Record<TripStatus, { label: string; badgeClass: strin
 // -------------------------------------------------
 
 export function Trips() {
+  const { user } = useAuth()
+  // Dispatcher = full access. Safety Officer = view only.
+  const isDispatcher = user?.role === 'Dispatcher'
   // Lists State
   const [availableVehicles, setAvailableVehicles] = useState<Vehicle[]>([])
   const [availableDrivers, setAvailableDrivers] = useState<Driver[]>([])
@@ -324,7 +328,8 @@ export function Trips() {
             </ul>
           </div>
 
-          {/* Create Trip Form Card */}
+          {/* Create Trip Form Card — Dispatcher only */}
+          {isDispatcher && (
           <div className="card bg-base-200 border border-base-300 p-6 rounded-2xl shadow-sm space-y-5">
             <div className="flex items-center justify-between border-b border-base-300/60 pb-3.5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-base-content flex items-center gap-2">
@@ -573,6 +578,7 @@ export function Trips() {
               </div>
             </form>
           </div>
+          )}
         </div>
 
         {/* ========================================================= */}
@@ -684,8 +690,8 @@ export function Trips() {
                           {statusInfo.label}
                         </span>
 
-                        {/* Dispatch Now — for draft trips */}
-                        {trip.status === 'draft' && (
+                        {/* Dispatch Now — for draft trips, Dispatcher only */}
+                        {isDispatcher && trip.status === 'draft' && (
                           <button
                             type="button"
                             onClick={(e) => handleQuickDispatch(trip.id, e)}
@@ -695,8 +701,8 @@ export function Trips() {
                           </button>
                         )}
 
-                        {/* Complete — for dispatched trips */}
-                        {trip.status === 'dispatched' && (
+                        {/* Complete — for dispatched trips, Dispatcher only */}
+                        {isDispatcher && trip.status === 'dispatched' && (
                           <button
                             type="button"
                             onClick={(e) => handleCompleteTrip(trip.id, e)}
@@ -707,8 +713,8 @@ export function Trips() {
                           </button>
                         )}
 
-                        {/* Cancel — for draft or dispatched trips */}
-                        {(trip.status === 'draft' || trip.status === 'dispatched') && (
+                        {/* Cancel — for draft or dispatched trips, Dispatcher only */}
+                        {isDispatcher && (trip.status === 'draft' || trip.status === 'dispatched') && (
                           <button
                             type="button"
                             onClick={(e) => handleCancelTrip(trip.id, e)}

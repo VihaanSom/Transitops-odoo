@@ -13,23 +13,26 @@ const {
 
 const router = Router();
 
-// GET  /api/trips          — list all trips (optional ?status= filter)
+// GET  /api/trips          — list all trips
+// Access: Dispatcher (full), Safety Officer (view only)
 router.get(
   '/',
   verifyToken,
-  requireRole('Dispatcher', 'Financial Analyst'),
+  requireRole('Dispatcher', 'Safety Officer'),
   controller.getAllTrips,
 );
 
 // GET  /api/trips/:id      — single trip detail
+// Access: Dispatcher (full), Safety Officer (view only)
 router.get(
   '/:id',
   verifyToken,
-  requireRole('Dispatcher', 'Financial Analyst'),
+  requireRole('Dispatcher', 'Safety Officer'),
   controller.getTripById,
 );
 
 // POST /api/trips          — create trip in draft status
+// Access: Dispatcher only
 router.post(
   '/',
   verifyToken,
@@ -38,7 +41,8 @@ router.post(
   controller.createTrip,
 );
 
-// PATCH /api/trips/:id/dispatch
+// PATCH /api/trips/:id/dispatch — dispatch a draft trip
+// Access: Dispatcher only
 router.patch(
   '/:id/dispatch',
   verifyToken,
@@ -47,7 +51,8 @@ router.patch(
   controller.dispatchTrip,
 );
 
-// PATCH /api/trips/:id/complete
+// PATCH /api/trips/:id/complete — mark trip as completed
+// Access: Dispatcher only
 router.patch(
   '/:id/complete',
   verifyToken,
@@ -56,7 +61,8 @@ router.patch(
   controller.completeTrip,
 );
 
-// PATCH /api/trips/:id/cancel
+// PATCH /api/trips/:id/cancel — cancel a trip
+// Access: Dispatcher only
 router.patch(
   '/:id/cancel',
   verifyToken,

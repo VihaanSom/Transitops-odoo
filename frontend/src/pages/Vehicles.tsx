@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react'
 import { fetchVehicles, createVehicle } from '../services/vehicleService'
 import type { Vehicle, CreateVehiclePayload, VehicleStatus } from '../types/api'
+import { useAuth } from '../context/AuthContext'
 
 // -------------------------------------------------
 // Constants
@@ -30,6 +31,8 @@ const VEHICLE_TYPES = ['Van', 'Truck', 'Mini', 'Bus', 'Trailer'] as const
 // -------------------------------------------------
 
 export function Vehicles() {
+  const { user } = useAuth()
+  const isFleetManager = user?.role === 'Fleet Manager'
   // Table State
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -214,15 +217,17 @@ export function Vehicles() {
           </label>
         </div>
 
-        {/* Right Action Button */}
-        <button
-          type="button"
-          onClick={openModal}
-          className="btn btn-warning btn-sm sm:btn-md rounded-full px-5 font-semibold shadow-sm flex items-center gap-2"
-        >
-          <Plus size={18} weight="bold" />
-          Add Vehicle
-        </button>
+        {/* Right Action Button — Fleet Manager only */}
+        {isFleetManager && (
+          <button
+            type="button"
+            onClick={openModal}
+            className="btn btn-warning btn-sm sm:btn-md rounded-full px-5 font-semibold shadow-sm flex items-center gap-2"
+          >
+            <Plus size={18} weight="bold" />
+            Add Vehicle
+          </button>
+        )}
       </div>
 
       {/* ---- Error Alert (Table) ---- */}

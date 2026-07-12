@@ -17,18 +17,18 @@ router.use(verifyToken);
 
 /**
  * GET /api/vehicles
- * Access: Fleet Manager, Dispatcher
+ * Access: Fleet Manager (full), Dispatcher (view), Financial Analyst (view)
  * Query params: ?type=Van&status=available
  */
 router.get(
   '/',
-  requireRole('Fleet Manager', 'Dispatcher'),
+  requireRole('Fleet Manager', 'Dispatcher', 'Financial Analyst'),
   vehicleController.getAllVehicles,
 );
 
 /**
  * POST /api/vehicles
- * Access: Fleet Manager
+ * Access: Fleet Manager only
  */
 router.post(
   '/',
@@ -39,13 +39,17 @@ router.post(
 
 /**
  * GET /api/vehicles/:id
- * Access: All authenticated roles
+ * Access: Fleet Manager, Dispatcher, Financial Analyst (all need vehicle detail)
  */
-router.get('/:id', vehicleController.getVehicleById);
+router.get(
+  '/:id',
+  requireRole('Fleet Manager', 'Dispatcher', 'Financial Analyst'),
+  vehicleController.getVehicleById,
+);
 
 /**
  * PUT /api/vehicles/:id
- * Access: Fleet Manager
+ * Access: Fleet Manager only
  */
 router.put(
   '/:id',
@@ -56,7 +60,7 @@ router.put(
 
 /**
  * DELETE /api/vehicles/:id
- * Access: Fleet Manager
+ * Access: Fleet Manager only
  * Soft-delete: sets vehicle status to 'retired'.
  */
 router.delete(
@@ -67,7 +71,7 @@ router.delete(
 
 /**
  * POST /api/vehicles/:id/documents
- * Access: Fleet Manager
+ * Access: Fleet Manager only
  */
 router.post(
   '/:id/documents',

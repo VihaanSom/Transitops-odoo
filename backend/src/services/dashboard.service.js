@@ -48,4 +48,24 @@ async function getKpis() {
   };
 }
 
-module.exports = { getKpis };
+/**
+ * GET /api/dashboard/recent-trips
+ * Returns the 5 most recent trips with vehicle and driver for the dashboard widget.
+ * Accessible to all authenticated roles (no RBAC restriction needed for the dashboard).
+ */
+async function getRecentTrips() {
+  return prisma.trips.findMany({
+    orderBy: { created_at: 'desc' },
+    take: 5,
+    include: {
+      vehicles: {
+        select: { id: true, registration_number: true, name_model: true },
+      },
+      drivers: {
+        select: { id: true, name: true },
+      },
+    },
+  });
+}
+
+module.exports = { getKpis, getRecentTrips };

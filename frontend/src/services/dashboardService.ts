@@ -21,10 +21,11 @@ export async function fetchKpis(): Promise<DashboardKpis> {
 }
 
 /**
- * GET /trips?limit=5
- * Returns the 5 most recent trips for the dashboard table.
- * Requires Dispatcher or Financial Analyst role — returns [] otherwise.
+ * GET /dashboard/recent-trips
+ * Returns the 5 most recent trips for the dashboard widget.
+ * Accessible to all authenticated roles — uses a dedicated dashboard endpoint
+ * that bypasses the /trips RBAC restriction.
  */
 export async function fetchRecentTrips(): Promise<RecentTrip[]> {
-  return apiFetch<RecentTrip[]>('/trips?limit=5')
+  return apiFetch<RecentTrip[]>('/dashboard/recent-trips')
 }
