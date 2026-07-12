@@ -10,7 +10,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // ── Routes ──────────────────────────────────────────────────────────────────
+app.use('/api/auth', require('./src/routes/auth.routes'));
 app.use('/api/trips', require('./src/routes/trip.routes'));
+app.use('/api/maintenance', require('./src/routes/maintenance.routes'));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
