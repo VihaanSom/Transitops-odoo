@@ -4,35 +4,51 @@ import {
   SquaresFour,
   EnvelopeSimple,
   Lock,
+  CaretDown,
   WarningCircle,
   Eye,
   EyeSlash,
+  User,
 } from '@phosphor-icons/react'
-import { useAuth } from '../context/AuthContext'
-import { login } from '../services/authService'
+import { register } from '../services/authService'
+import type { UserRole } from '../types/api'
 
 // -------------------------------------------------
 // Type definitions
 // -------------------------------------------------
 
-interface LoginFormState {
+interface RegisterFormState {
+  firstName: string
+  lastName: string
   email: string
   password: string
-  rememberMe: boolean
+  role: UserRole
 }
+
+// -------------------------------------------------
+// Constants
+// -------------------------------------------------
+
+const ROLES: readonly UserRole[] = [
+  'Fleet Manager',
+  'Dispatcher',
+  'Safety Officer',
+  'Financial Analyst',
+]
 
 // -------------------------------------------------
 // Component
 // -------------------------------------------------
 
-export function Login() {
+export function Register() {
   const navigate = useNavigate()
-  const { setAuthData } = useAuth()
 
-  const [form, setForm] = useState<LoginFormState>({
+  const [form, setForm] = useState<RegisterFormState>({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    rememberMe: false,
+    role: 'Dispatcher',
   })
 
   const [error, setError] = useState<string | null>(null)
@@ -41,11 +57,14 @@ export function Login() {
 
   // ---- Handlers ----
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value, type, checked } = e.target
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
+    const { name, value, type } = e.target
     setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]:
+        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }))
   }
 
@@ -55,14 +74,20 @@ export function Login() {
     setIsSubmitting(true)
 
     try {
-      const data = await login({ email: form.email, password: form.password })
-      setAuthData(data.token, data.user)
-      navigate('/dashboard', { replace: true })
+      await register({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      })
+      // Registration successful -- redirect to login
+      navigate('/login', { replace: true })
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : 'Invalid credentials. Account locked after 5 failed attempts.',
+          : 'Registration failed. Please try again.',
       )
     } finally {
       setIsSubmitting(false)
@@ -100,7 +125,7 @@ export function Login() {
       </div>
 
       {/* ============================================
-          RIGHT PANE -- Login Form (night / dark)
+          RIGHT PANE -- Registration Form (night / dark)
           ============================================ */}
       <div
         data-theme="night"
@@ -124,10 +149,10 @@ export function Login() {
 
           {/* Heading */}
           <h2 className="text-2xl font-semibold text-base-content mb-1">
-            Sign in to your account
+            Create your account
           </h2>
           <p className="text-sm text-base-content/50 mb-8">
-            Enter your credentials to continue
+            Fill in your details to get started
           </p>
 
           {/* Error Box */}
@@ -147,10 +172,58 @@ export function Login() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* First Name + Last Name */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="register-firstName"
+                  className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-base-content/50"
+                >
+                  First Name
+                </label>
+                <label className="input input-bordered w-full flex items-center gap-2">
+                  <User size={18} weight="duotone" className="text-base-content/40" />
+                  <input
+                    id="register-firstName"
+                    name="firstName"
+                    type="text"
+                    required
+                    placeholder="John"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    className="grow bg-transparent text-sm"
+                    autoComplete="given-name"
+                  />
+                </label>
+              </div>
+              <div>
+                <label
+                  htmlFor="register-lastName"
+                  className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-base-content/50"
+                >
+                  Last Name
+                </label>
+                <label className="input input-bordered w-full flex items-center gap-2">
+                  <User size={18} weight="duotone" className="text-base-content/40" />
+                  <input
+                    id="register-lastName"
+                    name="lastName"
+                    type="text"
+                    required
+                    placeholder="Doe"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="grow bg-transparent text-sm"
+                    autoComplete="family-name"
+                  />
+                </label>
+              </div>
+            </div>
+
             {/* Email */}
             <div>
               <label
-                htmlFor="login-email"
+                htmlFor="register-email"
                 className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-base-content/50"
               >
                 Email
@@ -158,7 +231,7 @@ export function Login() {
               <label className="input input-bordered w-full flex items-center gap-2">
                 <EnvelopeSimple size={18} weight="duotone" className="text-base-content/40" />
                 <input
-                  id="login-email"
+                  id="register-email"
                   name="email"
                   type="email"
                   required
@@ -174,7 +247,7 @@ export function Login() {
             {/* Password */}
             <div>
               <label
-                htmlFor="login-password"
+                htmlFor="register-password"
                 className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-base-content/50"
               >
                 Password
@@ -182,15 +255,15 @@ export function Login() {
               <label className="input input-bordered w-full flex items-center gap-2">
                 <Lock size={18} weight="duotone" className="text-base-content/40" />
                 <input
-                  id="login-password"
+                  id="register-password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="Enter your password"
+                  placeholder="Create a password"
                   value={form.password}
                   onChange={handleChange}
                   className="grow bg-transparent text-sm"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -207,26 +280,34 @@ export function Login() {
               </label>
             </div>
 
-            {/* Remember me + Forgot */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={form.rememberMe}
-                  onChange={handleChange}
-                  className="checkbox checkbox-primary checkbox-sm"
-                />
-                <span className="text-sm text-base-content/70">
-                  Remember me
-                </span>
-              </label>
-              <button
-                type="button"
-                className="text-sm font-medium text-primary hover:underline"
+            {/* Role Dropdown (sent to backend as part of register payload) */}
+            <div>
+              <label
+                htmlFor="register-role"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-base-content/50"
               >
-                Forgot password?
-              </button>
+                Role (RBAC)
+              </label>
+              <div className="relative">
+                <select
+                  id="register-role"
+                  name="role"
+                  value={form.role}
+                  onChange={handleChange}
+                  className="select select-bordered w-full text-sm appearance-none pr-10"
+                >
+                  {ROLES.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+                <CaretDown
+                  size={16}
+                  weight="bold"
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40"
+                />
+              </div>
             </div>
 
             {/* Submit */}
@@ -238,19 +319,19 @@ export function Login() {
               {isSubmitting ? (
                 <span className="loading loading-spinner loading-sm" />
               ) : (
-                'Sign In'
+                'Register'
               )}
             </button>
           </form>
 
-          {/* Navigation to Register */}
+          {/* Navigation to Login */}
           <p className="mt-6 text-center text-sm text-base-content/50">
-            Don&apos;t have an account?{' '}
+            Already have an account?{' '}
             <Link
-              to="/register"
+              to="/login"
               className="font-medium text-primary hover:underline"
             >
-              Register
+              Sign In
             </Link>
           </p>
 

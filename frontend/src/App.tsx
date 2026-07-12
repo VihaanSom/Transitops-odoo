@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { Login } from './pages/Login'
+import { Register } from './pages/Register'
 
 // -------------------------------------------------
 // Route Guards
@@ -26,6 +27,7 @@ export default function App() {
           {/* Public-only routes (redirects to dashboard if already logged in) */}
           <Route element={<PublicOnlyRoutes />}>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Route>
 
           {/* Protected routes (redirects to login if not authenticated) */}
