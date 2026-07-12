@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ToastProvider } from './components/feedback/Toast'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
+import { Drivers } from './pages/Drivers'
 import { Vehicles } from './pages/Vehicles'
 import { AppShell } from './components/layout/AppShell'
 
@@ -25,6 +27,7 @@ function PublicOnlyRoutes() {
 export default function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <BrowserRouter>
         <Routes>
           {/* Public-only routes (redirects to dashboard if already logged in) */}
@@ -41,6 +44,9 @@ export default function App() {
               <Route path="/fleet" element={<Vehicles />} />
               <Route path="/vehicles" element={<Navigate to="/fleet" replace />} />
 
+              {/* Placeholder routes for sidebar nav items */}
+              <Route path="/fleet" element={<PlaceholderPage title="Fleet Management" />} />
+              <Route path="/drivers" element={<Drivers />} />
               {/* Placeholder routes for other sidebar nav items */}
               <Route path="/drivers" element={<PlaceholderPage title="Driver Management" />} />
               <Route path="/trips" element={<PlaceholderPage title="Trip Management" />} />
@@ -55,6 +61,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   )
 }

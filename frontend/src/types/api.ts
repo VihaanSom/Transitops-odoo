@@ -1,3 +1,5 @@
+import type { DriverStatus } from './models'
+
 // -------------------------------------------------
 // Auth API Types
 // -------------------------------------------------
@@ -85,4 +87,21 @@ export interface CreateVehiclePayload {
 
 export interface ApiErrorBody {
   message?: string
+}
+
+// -------------------------------------------------
+// Driver API Payload Types
+// -------------------------------------------------
+
+export interface CreateDriverPayload {
+  name: string
+  license_number: string
+  license_category: string
+  license_expiry_date: string
+  contact_number: string
+  safety_score: number
+}
+
+export interface UpdateDriverStatusPayload {
+  status: DriverStatus
 }
