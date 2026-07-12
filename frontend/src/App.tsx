@@ -9,6 +9,7 @@ import { Vehicles } from './pages/Vehicles'
 import { FuelExpenses } from './pages/FuelExpenses'
 import { Trips } from './pages/Trips'
 import { Maintenance } from './pages/Maintenance'
+import { Analytics } from './pages/Analytics'
 import { AppShell } from './components/layout/AppShell'
 
 // -------------------------------------------------
@@ -50,7 +51,7 @@ export default function App() {
               <Route path="/drivers" element={<Drivers />} />
               <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/fuel-expenses" element={<FuelExpenses />} />
-              <Route path="/analytics" element={<PlaceholderPage title="Analytics" />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
             </Route>
           </Route>

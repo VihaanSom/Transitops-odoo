@@ -188,3 +188,26 @@ export interface CloseMaintenancePayload {
   closed_at?: string
 }
 
+// -------------------------------------------------
+// Reports & Analytics API Types
+// -------------------------------------------------
+
+export interface VehicleAnalyticsRecord {
+  vehicle_id: string
+  registration_number: string
+  name_model: string
+  total_revenue: number
+  total_maintenance_cost: number
+  total_fuel_cost: number
+  total_distance: number
+  total_fuel_liters?: number
+  acquisition_cost: number
+  vehicle_roi: number
+}
+
+export interface MonthlyRevenueData {
+  month: string
+  revenue: number
+}
+
+
