@@ -16,4 +16,31 @@ async function login(req, res, next) {
   }
 }
 
-module.exports = { login };
+/**
+ * POST /api/auth/register
+ * Body is already validated by the validate(registerSchema) middleware.
+ */
+async function register(req, res, next) {
+  try {
+    const result = await authService.register(req.body);
+    return res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * DELETE /api/auth/me
+ * Deletes the currently authenticated user's account.
+ */
+async function deleteAccount(req, res, next) {
+  try {
+    const id = req.user.id;
+    await authService.deleteAccount(id);
+    return res.status(200).json({ message: 'Account deleted successfully.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { login, register, deleteAccount };
