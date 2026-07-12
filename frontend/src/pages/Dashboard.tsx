@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import {
-  Truck,
-  CheckCircle,
-  Wrench,
-  Path,
-  ClockCountdown,
-  SteeringWheel,
-  ChartDonut,
-  Funnel,
-  Circle,
+  TruckIcon as Truck,
+  CheckCircleIcon as CheckCircle,
+  WrenchIcon as Wrench,
+  PathIcon as Path,
+  ClockCountdownIcon as ClockCountdown,
+  SteeringWheelIcon as SteeringWheel,
+  ChartDonutIcon as ChartDonut,
+  FunnelIcon as Funnel,
+  CircleIcon as Circle,
+  ArrowRightIcon as ArrowRight,
 } from '@phosphor-icons/react'
-import { fetchKpis } from '../services/dashboardService'
+import { fetchKpis, fetchRecentTrips } from '../services/dashboardService'
 import type { DashboardKpis } from '../types/api'
+import type { RecentTrip } from '../services/dashboardService'
 
 // -------------------------------------------------
 // KPI Card config
@@ -28,31 +30,11 @@ interface KpiCardConfig {
 const KPI_CARDS: KpiCardConfig[] = [
   { key: 'activeVehicles', label: 'Active Vehicles', icon: Truck, accentColor: 'text-info' },
   { key: 'availableVehicles', label: 'Available Vehicles', icon: CheckCircle, accentColor: 'text-success' },
-  { key: 'vehiclesInMaintenance', label: 'Vehicles in Maintenance', icon: Wrench, accentColor: 'text-warning' },
+  { key: 'vehiclesInMaintenance', label: 'In Maintenance', icon: Wrench, accentColor: 'text-warning' },
   { key: 'activeTrips', label: 'Active Trips', icon: Path, accentColor: 'text-info' },
   { key: 'pendingTrips', label: 'Pending Trips', icon: ClockCountdown, accentColor: 'text-warning' },
   { key: 'driversOnDuty', label: 'Drivers on Duty', icon: SteeringWheel, accentColor: 'text-primary' },
   { key: 'fleetUtilization', label: 'Fleet Utilization', icon: ChartDonut, accentColor: 'text-success', format: 'percent' },
-]
-
-// -------------------------------------------------
-// Static mock data for Recent Trips & Vehicle Status
-// (Replace with live API calls when endpoints are wired)
-// -------------------------------------------------
-
-interface RecentTrip {
-  id: string
-  vehicle: string
-  driver: string
-  status: 'on_trip' | 'completed' | 'dispatched' | 'draft'
-  eta: string
-}
-
-const RECENT_TRIPS: RecentTrip[] = [
-  { id: 'TR001', vehicle: 'VAN-05', driver: 'Alex', status: 'on_trip', eta: '45 min' },
-  { id: 'TR002', vehicle: 'TRK-12', driver: 'John', status: 'completed', eta: '--' },
-  { id: 'TR003', vehicle: 'MINI-09', driver: 'Priya', status: 'dispatched', eta: '1h 10m' },
-  { id: 'TR006', vehicle: '--', driver: '--', status: 'draft', eta: 'Awaiting vehicle' },
 ]
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
@@ -60,21 +42,8 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   completed: { label: 'Completed', className: 'badge-success' },
   dispatched: { label: 'Dispatched', className: 'badge-primary' },
   draft: { label: 'Draft', className: 'badge-ghost' },
+  cancelled: { label: 'Cancelled', className: 'badge-error' },
 }
-
-interface VehicleStatusBar {
-  label: string
-  value: number
-  max: number
-  color: string
-}
-
-const VEHICLE_STATUS_BARS: VehicleStatusBar[] = [
-  { label: 'Available', value: 42, max: 100, color: 'progress-success' },
-  { label: 'On Trip', value: 53, max: 100, color: 'progress-info' },
-  { label: 'In Shop', value: 5, max: 100, color: 'progress-warning' },
-  { label: 'Retired', value: 3, max: 100, color: 'progress-error' },
-]
 
 // -------------------------------------------------
 // Component
@@ -82,16 +51,41 @@ const VEHICLE_STATUS_BARS: VehicleStatusBar[] = [
 
 export function Dashboard() {
   const [kpis, setKpis] = useState<DashboardKpis | null>(null)
+  const [trips, setTrips] = useState<RecentTrip[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [tripsLoading, setTripsLoading] = useState(true)
 
   useEffect(() => {
+    // Load KPIs (all authenticated roles can access this)
     fetchKpis()
       .then(setKpis)
       .catch(() => {
-        // Silently fail -- KPI cards will show skeleton
+        // KPI cards will show skeleton / zeros
       })
       .finally(() => setIsLoading(false))
+
+    // Load recent trips (Dispatcher / Financial Analyst only — graceful fail for other roles)
+    fetchRecentTrips()
+      .then((data) => setTrips(data.slice(0, 5)))
+      .catch(() => {
+        // Role doesn't have access — leave trips empty, table shows "no access" message
+        setTrips([])
+      })
+      .finally(() => setTripsLoading(false))
   }, [])
+
+  // Derive vehicle status bars from live KPI data
+  const totalKnown = kpis
+    ? kpis.availableVehicles + kpis.activeVehicles + kpis.vehiclesInMaintenance
+    : 0
+
+  const vehicleStatusBars = kpis
+    ? [
+        { label: 'Available', value: kpis.availableVehicles, max: Math.max(totalKnown, 1), color: 'text-success', progressColor: 'progress-success' },
+        { label: 'On Trip', value: kpis.activeVehicles, max: Math.max(totalKnown, 1), color: 'text-info', progressColor: 'progress-info' },
+        { label: 'In Shop', value: kpis.vehiclesInMaintenance, max: Math.max(totalKnown, 1), color: 'text-warning', progressColor: 'progress-warning' },
+      ]
+    : []
 
   return (
     <div className="space-y-6">
@@ -143,7 +137,6 @@ export function Dashboard() {
             >
               <div className="card-body p-4 gap-2">
                 {isLoading ? (
-                  // Skeleton loading state
                   <>
                     <div className="skeleton h-3 w-20" />
                     <div className="skeleton h-8 w-14 mt-1" />
@@ -181,30 +174,55 @@ export function Dashboard() {
               <table className="table table-sm">
                 <thead>
                   <tr className="text-xs uppercase tracking-wider text-base-content/40">
-                    <th className="font-medium">Trip</th>
+                    <th className="font-medium">Route</th>
                     <th className="font-medium">Vehicle</th>
                     <th className="font-medium">Driver</th>
                     <th className="font-medium">Status</th>
-                    <th className="font-medium">ETA</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {RECENT_TRIPS.map((trip) => {
-                    const badge = STATUS_BADGE[trip.status]
-                    return (
-                      <tr key={trip.id} className="hover">
-                        <td className="font-medium text-base-content">{trip.id}</td>
-                        <td className="text-base-content/70">{trip.vehicle}</td>
-                        <td className="text-base-content/70">{trip.driver}</td>
-                        <td>
-                          <span className={`badge badge-sm ${badge?.className}`}>
-                            {badge?.label}
-                          </span>
-                        </td>
-                        <td className="text-base-content/50">{trip.eta}</td>
+                  {tripsLoading ? (
+                    Array.from({ length: 4 }).map((_, i) => (
+                      <tr key={i}>
+                        <td><div className="skeleton h-4 w-36" /></td>
+                        <td><div className="skeleton h-4 w-24" /></td>
+                        <td><div className="skeleton h-4 w-20" /></td>
+                        <td><div className="skeleton h-5 w-20 rounded-full" /></td>
                       </tr>
-                    )
-                  })}
+                    ))
+                  ) : trips.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="text-center py-8 text-base-content/40 text-sm">
+                        No trips to show. (Requires Dispatcher or Financial Analyst role.)
+                      </td>
+                    </tr>
+                  ) : (
+                    trips.map((trip) => {
+                      const badge = STATUS_BADGE[trip.status] ?? { label: trip.status, className: 'badge-ghost' }
+                      return (
+                        <tr key={trip.id} className="hover">
+                          <td>
+                            <div className="flex items-center gap-1 text-sm font-medium text-base-content">
+                              <span>{trip.source}</span>
+                              <ArrowRight size={12} weight="bold" className="text-base-content/30" />
+                              <span>{trip.destination}</span>
+                            </div>
+                          </td>
+                          <td className="text-base-content/70 text-xs font-mono">
+                            {trip.vehicles?.registration_number ?? '—'}
+                          </td>
+                          <td className="text-base-content/70">
+                            {trip.drivers?.name ?? '—'}
+                          </td>
+                          <td>
+                            <span className={`badge badge-sm ${badge.className}`}>
+                              {badge.label}
+                            </span>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
@@ -218,22 +236,46 @@ export function Dashboard() {
               Vehicle Status
             </h3>
             <div className="space-y-4">
-              {VEHICLE_STATUS_BARS.map((bar) => (
-                <div key={bar.label} className="space-y-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2 text-base-content/70">
-                      <Circle size={8} weight="fill" className={bar.color.replace('progress-', 'text-')} />
-                      {bar.label}
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="skeleton h-3 w-24" />
+                    <div className="skeleton h-2 w-full rounded-full" />
+                  </div>
+                ))
+              ) : (
+                vehicleStatusBars.map((bar) => (
+                  <div key={bar.label} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className={`flex items-center gap-2 text-base-content/70`}>
+                        <Circle size={8} weight="fill" className={bar.color} />
+                        {bar.label}
+                      </div>
+                      <span className="font-medium text-base-content tabular-nums">{bar.value}</span>
                     </div>
-                    <span className="font-medium text-base-content tabular-nums">{bar.value}</span>
+                    <progress
+                      className={`progress ${bar.progressColor} w-full h-2`}
+                      value={bar.value}
+                      max={bar.max}
+                    />
+                  </div>
+                ))
+              )}
+
+              {/* Fleet utilization summary */}
+              {!isLoading && kpis && (
+                <div className="pt-2 mt-2 border-t border-base-300">
+                  <div className="flex items-center justify-between text-xs text-base-content/50">
+                    <span>Fleet Utilization</span>
+                    <span className="font-semibold text-success tabular-nums">{kpis.fleetUtilization}%</span>
                   </div>
                   <progress
-                    className={`progress ${bar.color} w-full h-2`}
-                    value={bar.value}
-                    max={bar.max}
+                    className="progress progress-success w-full h-2 mt-1"
+                    value={kpis.fleetUtilization}
+                    max={100}
                   />
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

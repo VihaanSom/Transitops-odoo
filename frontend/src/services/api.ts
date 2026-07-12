@@ -13,8 +13,8 @@ export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): 
   })
 
   if (!res.ok) {
-    const error: { message?: string } = await res.json().catch(() => ({}))
-    throw new Error(error.message || `API error: ${res.status}`)
+    const error: { message?: string; error?: string } = await res.json().catch(() => ({}))
+    throw new Error(error.error || error.message || `API error: ${res.status}`)
   }
 
   return res.json() as Promise<T>
