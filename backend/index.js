@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 
 const authRoutes = require('./src/routes/auth.routes');
+const vehicleRoutes = require('./src/routes/vehicle.routes');
 const errorHandler = require('./src/middlewares/errorHandler');
 
 const app = express();
@@ -18,6 +19,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 
 // ── Global Error Handler (must be last) ───────────────────────────────────────
 app.use(errorHandler);
